@@ -1,6 +1,5 @@
-'use strict'
 import mongoose from 'mongoose'
-import localDatabase from '../../common/localDatabase'
+import localDatabase from '../../common/localDatabase.js'
 
 const schema = new localDatabase.Schema({
   name: String,

@@ -1,4 +1,4 @@
-import WebhookService from './webhook.service'
+import WebhookService from './webhook.service.js'
 
 class Controller {
   async handleWebhook (req, res, next) {

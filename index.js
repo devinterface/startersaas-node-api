@@ -1,8 +1,7 @@
-'use strict'
-import './common/env'
-import Server from './server'
-import routes from './routes'
+import './common/env.js'
+import ExpressServer from './server.js'
+import routes from './routes.js'
 
-export default new Server()
+export default new ExpressServer()
   .router(routes)
   .listen(process.env.PORT)

@@ -1,16 +1,15 @@
-'use strict'
-import User from '../users/user.model'
+import User from '../users/user.model.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
-import AccountService from '../accounts/account.service'
-import UserService from '../users/user.service'
-import EmailService from '../../services/email.service'
-import ROLES from '../users/role.model'
+import AccountService from '../accounts/account.service.js'
+import UserService from '../users/user.service.js'
+import EmailService from '../../services/email.service.js'
+import ROLES from '../users/role.model.js'
 import moment from 'moment'
 
 class AuthService {
-  async login(email, password, isRefresh = false) {
+  async login (email, password, isRefresh = false) {
     const user = await User.findOne({ email: email, active: true }).exec()
     if (!user) {
       return
@@ -21,7 +20,7 @@ class AuthService {
     }
   }
 
-  async signup(accountData, userData) {
+  async signup (accountData, userData) {
     accountData.subdomain = accountData.subdomain.toLowerCase()
     accountData.periodEndsAt = moment().add(process.env.TRIAL_DAYS, 'days')
     accountData.firstSubscription = false
@@ -33,7 +32,7 @@ class AuthService {
     return { account: account, user: user }
   }
 
-  async activate(token) {
+  async activate (token) {
     const user = await User.findOneAndUpdate({ confirmationToken: token, active: false }, { confirmationToken: null, active: true }, { new: true })
     if (user) {
       EmailService.activated(user)
@@ -41,7 +40,7 @@ class AuthService {
     return user
   }
 
-  async resendActivation(email) {
+  async resendActivation (email) {
     const user = await User.findOne({ email: email, active: false }).exec()
     if (user) {
       EmailService.sendActivationEmail(user)
@@ -49,7 +48,7 @@ class AuthService {
     return user
   }
 
-  async forgotPassword(email) {
+  async forgotPassword (email) {
     const user = await User.findOne({ email: email }).exec()
     if (user) {
       user.passwordResetToken = uuidv4()
@@ -60,7 +59,7 @@ class AuthService {
     }
   }
 
-  async resetPassword(passwordResetToken, password) {
+  async resetPassword (passwordResetToken, password) {
     const user = await User.findOne({ passwordResetToken: passwordResetToken }).exec()
     if (user) {
       const currentDate = new Date()
@@ -78,7 +77,7 @@ class AuthService {
     return false
   }
 
-  async ssoLogin(sso) {
+  async ssoLogin (sso) {
     const user = await User.findOne({ sso: sso, active: true }).exec()
     if (!user) {
       return
@@ -86,7 +85,7 @@ class AuthService {
     return this.generateToken(user.email)
   }
 
-  async generateToken(email) {
+  async generateToken (email) {
     const user = await User.findOne({ email: email, active: true }).exec()
     const payload = { user: { email: user.email, role: user.role } }
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })

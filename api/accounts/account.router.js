@@ -1,9 +1,8 @@
-'use strict'
 import * as express from 'express'
-import accountController from './account.controller'
-import authorizeRequest from '../../middlewares/authorizeRequest.middleware'
-import { wrap } from '../../common/exceptions'
-import ROLE from '../users/role.model'
+import accountController from './account.controller.js'
+import authorizeRequest from '../../middlewares/authorizeRequest.middleware.js'
+import { wrap } from '../../common/exceptions.js'
+import ROLE from '../users/role.model.js'
 
 export default express
   .Router()

@@ -1,8 +1,7 @@
-'use strict'
-import User from './user.model'
+import User from './user.model.js'
 import bcrypt from 'bcrypt'
-import BaseService from '../../services/base.service'
-import EmailService from '../../services/email.service'
+import BaseService from '../../services/base.service.js'
+import EmailService from '../../services/email.service.js'
 import { v4 as uuidv4 } from 'uuid'
 
 class UsersService extends BaseService {

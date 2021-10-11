@@ -1,12 +1,5 @@
-'use strict'
-// import { Notifier } from '@airbrake/node'
-import l from './logger'
-import ApplicationError from '../libs/errors/application.error'
-
-// const airbrakeClient = Notifier(
-//   process.env.AIRBRAKE_PROJECT_ID,
-//   process.env.AIRBRAKE_PROJECT_KEY
-// )
+import l from './logger.js'
+import ApplicationError from '../libs/errors/application.error.js'
 
 const notifyException = async (req, error) => {
   l.error(req)

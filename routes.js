@@ -1,14 +1,13 @@
-'use strict'
 import passport from 'passport'
 
-import authRouter from './api/auth/auth.router'
-import userRouter from './api/users/user.router'
-import accountRouter from './api/accounts/account.router'
-import subscriptionRouter from './api/subscriptions/subscription.router'
-import webhookRouter from './api/webhooks/webhook.router'
+import authRouter from './api/auth/auth.router.js'
+import userRouter from './api/users/user.router.js'
+import accountRouter from './api/accounts/account.router.js'
+import subscriptionRouter from './api/subscriptions/subscription.router.js'
+import webhookRouter from './api/webhooks/webhook.router.js'
 
-import authorizeRequest from './middlewares/authorizeRequest.middleware'
-import ROLE from './api/users/role.model'
+import authorizeRequest from './middlewares/authorizeRequest.middleware.js'
+import ROLE from './api/users/role.model.js'
 
 // APP ROUTES
 

@@ -2,7 +2,7 @@ import {
   StatusCodes,
   getStatusCode
 } from 'http-status-codes'
-import ApplicationError from '../libs/errors/application.error'
+import ApplicationError from '../libs/errors/application.error.js'
 
 class BaseService {
   getModel () {

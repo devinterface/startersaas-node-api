@@ -3,23 +3,19 @@
   "version": "1.0.0",
   "description": "Starter SAAS Node",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "cd build && node main",
-    "dev": "nodemon build.dev.js | pino-pretty ",
-    "prod": "node build.prod.js | pino-pretty ",
-    "debug": "ndb build.dev.js | pino-pretty",
-    "test": "mocha --compilers js:babel-register --exit",
-    "apidoc": "apidoc -i server/api -o apidoc/",
+    "dev": "nodemon index.js | pino-pretty ",
+    "prod": "node index.js | pino-pretty ",
     "linter": "standard --fix",
-    "migrate:users": "node -r dotenv/config -r @babel/register scripts/migrateUsers | pino-pretty"
+    "migrate:users": "node -r scripts/migrateUsers | pino-pretty"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "apicache": "^1.6.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "bcrypt": "^5.0.1",
     "bluebird": "^3.7.2",
-    "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^9.0.2",
@@ -41,6 +37,7 @@
     "pug": "^3.0.2",
     "querystring": "^0.2.1",
     "redis": "^3.1.2",
+    "slugify": "^1.6.1",
     "static-asset": "^0.6.0",
     "stripe": "^8.149.0",
     "uuid": "^8.3.2",
@@ -48,18 +45,11 @@
     "xml2json": "^0.12.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.3",
-    "@babel/plugin-transform-runtime": "^7.14.3",
-    "@babel/preset-env": "^7.14.2",
-    "@babel/register": "^7.13.16",
-    "@babel/runtime": "^7.14.0",
-    "apidoc": "^0.28.1",
     "chai": "^4.3.4",
     "mocha": "^8.4.0",
-    "ndb": "^1.1.5",
     "nodemon": "^2.0.7",
     "pino-pretty": "^4.8.0",
-    "standard": "^16.0.3",
+    "standard": "^16.0.4",
     "supertest": "^6.1.3"
   },
   "standard": {

@@ -1,5 +1,3 @@
-'use-strict'
-
 import redis from 'redis'
 import Promise from 'bluebird'
 

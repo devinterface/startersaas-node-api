@@ -1,17 +1,15 @@
-'use strict'
-import AccountService from './account.service'
+import AccountService from './account.service.js'
 import AccountValidator from './account.validator.js'
-import EmailService from '../../services/email.service'
 import _ from 'lodash'
 
 class Controller {
-  async byId(req, res) {
+  async byId (req, res) {
     const account = await AccountService.byId(req.params.id)
     if (account) res.json(account)
     else res.status(404).end()
   }
 
-  async update(req, res) {
+  async update (req, res) {
     const accountData = _.pick(req.body, ['companyName', 'companyVat', 'companyBillingAddress', 'companySdi', 'companyPhone', 'companyEmail', 'companyPec'])
     const accountErrors = await AccountValidator.onUpdate(accountData)
     if (accountErrors) {

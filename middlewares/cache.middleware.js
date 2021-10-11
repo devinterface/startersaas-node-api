@@ -1,6 +1,5 @@
-'use strict'
 import apicache from 'apicache'
-import { redisCacheCommon } from '../common/redisInstances'
+import { redisCacheCommon } from '../common/redisInstances.js'
 
 const cache = apicache
   .options({

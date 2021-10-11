@@ -1,5 +1,4 @@
-'use strict'
-import UserService from './user.service'
+import UserService from './user.service.js'
 import Joi from '@hapi/joi'
 
 class UserValidator {

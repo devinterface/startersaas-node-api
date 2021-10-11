@@ -1,5 +1,4 @@
-'use strict'
-import localDatabase from '../../common/localDatabase'
+import localDatabase from '../../common/localDatabase.js'
 
 const schema = new localDatabase.Schema({
   payload: {}

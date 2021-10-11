@@ -1,4 +1,4 @@
-import ApplicationError from '../libs/errors/application.error'
+import ApplicationError from '../libs/errors/application.error.js'
 import {
   StatusCodes,
   getStatusCode

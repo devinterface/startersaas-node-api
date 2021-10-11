@@ -1,4 +1,3 @@
-'use strict'
 import pino from 'pino'
 
 const l = pino({

@@ -1,9 +1,5 @@
-/* eslint-disable prefer-destructuring */
-
-'use strict'
-
-import SubscriptionService from './subscription.service'
-import SubscriptionValidator from './subscription.validator'
+import SubscriptionService from './subscription.service.js'
+import SubscriptionValidator from './subscription.validator.js'
 
 class Controller {
   async subscribe (req, res, next) {
@@ -15,8 +11,8 @@ class Controller {
       })
     }
     try {
-      const sCustomer = await SubscriptionService.subscribe(req.user.id, req.body.sourceToken, req.body.planId)
-      return res.status(200).json(sCustomer)
+      const subscription = await SubscriptionService.subscribe(req.user.id, req.body.sourceToken, req.body.planId)
+      return res.status(200).json(subscription)
     } catch (error) {
       return res.status(error.status).json(error)
     }

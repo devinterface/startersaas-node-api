@@ -1,6 +1,6 @@
 import mongoose from '../common/localDatabase'
 import l from '../common/logger'
-import UserService from '../services/user.service'
+import UserService from '../api/users/user.service.js'
 
 (async function () {
   try {

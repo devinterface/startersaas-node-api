@@ -1,7 +1,6 @@
-'use strict'
 import * as express from 'express'
-import subscriptionController from './subscription.controller'
-import { wrap } from '../../common/exceptions'
+import subscriptionController from './subscription.controller.js'
+import { wrap } from '../../common/exceptions.js'
 
 export default express
   .Router()

@@ -30,4 +30,4 @@ class Fattura24Client {
   }
 }
 
-module.exports = new Fattura24Client()
+export default new Fattura24Client()

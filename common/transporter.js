@@ -1,4 +1,3 @@
-'use strict'
 import nodemailer from 'nodemailer'
 const transporter = nodemailer.createTransport({
   host: process.env.MAILER_HOST,

@@ -1,35 +1,28 @@
-'use strict'
 import Express from 'express'
-import morgan from 'morgan' // used to log HTTP Requests
-import * as bodyParser from 'body-parser'
+import morgan from 'morgan'
 import * as http from 'http'
 import * as os from 'os'
-import * as path from 'path'
-import l from './common/logger'
+import l from './common/logger.js'
 import passport from 'passport'
 import compression from 'compression'
-import { handleException } from './common/exceptions'
+import { handleException } from './common/exceptions.js'
 import cors from 'cors'
-import staticAsset from 'static-asset'
-import setLang from './middlewares/lang.middleware'
+import { setLang } from './middlewares/lang.middleware.js'
 
-// Passport OAuth strategies
-require('./common/passport.js')
+import './common/passport.js'
 
 const app = new Express()
 
 export default class ExpressServer {
   constructor () {
     if (process.env.ENABLE_HTTP_LOGGER === 'true') app.use(morgan('combined'))
-    const root = path.normalize(`${__dirname}/../..`)
-    app.use(bodyParser.urlencoded({ extended: false }))
-    app.use(bodyParser.json())
+    app.use(Express.urlencoded({ extended: false }))
+    app.use(Express.json())
     app.use(cors())
     app.options('*', cors())
     app.use(compression())
     app.use(setLang())
     app.use(passport.initialize())
-    app.use(staticAsset(`${root}/apidoc`))
     app.use(function (req, res, next) {
       next()
     })

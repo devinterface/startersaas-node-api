@@ -1,4 +1,3 @@
-'use strict'
 const ROLES = {
   USER: 'user',
   ADMIN: 'admin',

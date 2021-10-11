@@ -1,7 +1,6 @@
-'use strict'
 import passport from 'passport'
 import passportJWT from 'passport-jwt'
-import UserService from '../api/users/user.service'
+import UserService from '../api/users/user.service.js'
 
 const JwtStrategy = passportJWT.Strategy
 const ExtractJwt = passportJWT.ExtractJwt

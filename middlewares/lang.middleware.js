@@ -1,7 +1,6 @@
-'use strict'
-import i18n from '../common/i18n'
+import i18n from '../common/i18n.js'
 
-module.exports = function (options) {
+const setLang = function (options) {
   return function (req, res, next) {
     const lang = req.acceptsLanguages('en', 'it', 'fr', 'es', 'de')
     if (lang) {
@@ -12,3 +11,5 @@ module.exports = function (options) {
     next()
   }
 }
+
+export { setLang }

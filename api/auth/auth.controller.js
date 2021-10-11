@@ -1,24 +1,20 @@
-'use strict'
-import AuthService from './auth.service'
-import AccountService from '../accounts/account.service'
-import EmailService from '../../services/email.service'
-import UserValidator from '../users/user.validator'
-import AccountValidator from '../accounts/account.validator'
+import AuthService from './auth.service.js'
+import AccountService from '../accounts/account.service.js'
+import EmailService from '../../services/email.service.js'
+import UserValidator from '../users/user.validator.js'
+import AccountValidator from '../accounts/account.validator.js'
 import _ from 'lodash'
-
-const slugify = (text) => {
-  return text.toString().toLowerCase()
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-    .replace(/\-\-+/g, '-') // Replace multiple - with single -
-    .replace(/^-+/, '') // Trim - from start of text
-    .replace(/-+$/, '') // Trim - from end of text
-}
+import slugify from 'slugify'
 
 class Controller {
   async signup (req, res, next) {
     const accountData = _.pick(req.body, ['subdomain'])
-    accountData.subdomain = slugify(accountData.subdomain)
+    accountData.subdomain = slugify(accountData.subdomain, {
+      replacement: '-',
+      lower: true,
+      strict: true,
+      trim: true
+    })
     const accountErrors = await AccountValidator.onSignup(accountData)
     if (accountErrors) {
       return res.status(422).json({
@@ -35,7 +31,7 @@ class Controller {
       })
     }
     await AuthService.signup(accountData, userData)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Articoli e Social] Nuovo iscritto', 'Iscrizione effettuata', `${userData.email} - si è appena iscritto`)
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Nuovo iscritto', 'Iscrizione effettuata', `${userData.email} - si è appena iscritto`)
     return res.json({
       success: true,
       message: 'Successfully sent activation email.'

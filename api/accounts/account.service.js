@@ -1,9 +1,8 @@
-'use strict'
-import Account from './account.model'
-import BaseService from '../../services/base.service'
+import Account from './account.model.js'
+import BaseService from '../../services/base.service.js'
 import Stripe from 'stripe'
-import makeInvoiceDocument from '../../libs/fattura24/document'
-import Fattura24Client from '../../libs/fattura24/client'
+import makeInvoiceDocument from '../../libs/fattura24/document.js'
+import Fattura24Client from '../../libs/fattura24/client.js'
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY)
 
 class AccountService extends BaseService {

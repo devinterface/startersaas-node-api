@@ -1,5 +1,4 @@
-'use strict'
-import AccountService from './account.service'
+import AccountService from './account.service.js'
 import Joi from '@hapi/joi'
 
 class AccountValidator {

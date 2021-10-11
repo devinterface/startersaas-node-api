@@ -1,15 +1,14 @@
-'use strict'
 import Polyglot from 'node-polyglot'
+
+import en from '../locales/en.js'
+import it from '../locales/it.js'
 
 const defaultLocale = process.env.DEFAULT_LOCALE
 const availableLocales = JSON.stringify(process.env.AVAILABLE_LOCALES.split(' '))
 
 const phrases = {
-  en: require('../locales/en.js'),
-  it: require('../locales/it.js'),
-  fr: require('../locales/fr.js'),
-  de: require('../locales/de.js'),
-  es: require('../locales/es.js')
+  en: en,
+  it: it
 }
 
 const polyglot = new Polyglot({ defaultLocale, phrases })

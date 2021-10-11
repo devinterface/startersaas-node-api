@@ -1,8 +1,7 @@
-'use strict'
 import * as express from 'express'
 import passport from 'passport'
-import authController from './auth.controller'
-import { wrap } from '../../common/exceptions'
+import authController from './auth.controller.js'
+import { wrap } from '../../common/exceptions.js'
 
 export default express
   .Router()

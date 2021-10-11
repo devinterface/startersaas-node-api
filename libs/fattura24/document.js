@@ -15,7 +15,6 @@ const makeInvoiceDocument = (stripePayload, account, user) => {
   const from = moment.unix(stripePayload.data.object.lines.data[0].period.start).format('DD/MM/YYYY')
   const to = moment.unix(stripePayload.data.object.lines.data[0].period.end).format('DD/MM/YYYY')
   const nickname = stripePayload.data.object.lines.data[0].plan.nickname
-  const isPec = account.companyPec
 
   const document = {
     Fattura24: {

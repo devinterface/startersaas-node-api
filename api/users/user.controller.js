@@ -1,7 +1,6 @@
-'use strict'
-import UserService from './user.service'
-import AccountService from '../accounts/account.service'
-import UserValidator from './user.validator'
+import UserService from './user.service.js'
+import AccountService from '../accounts/account.service.js'
+import UserValidator from './user.validator.js'
 import _ from 'lodash'
 
 class Controller {

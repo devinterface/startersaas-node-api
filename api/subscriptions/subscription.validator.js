@@ -1,4 +1,3 @@
-'use strict'
 import Joi from '@hapi/joi'
 
 class SubscriptionValidator {

@@ -1,10 +1,9 @@
-'use strict'
 import pug from 'pug'
-import i18n from '../common/i18n'
-import transporter from '../common/transporter'
+import i18n from '../common/i18n.js'
+import transporter from '../common/transporter.js'
 
 class EmailService {
-  async forgotPasswordLink (user) {
+  async forgotPasswordLink(user) {
     const emailText = pug.renderFile('views/mailer/modify_password.pug', {
       email: user.email,
       passwordResetToken: user.passwordResetToken,
@@ -14,14 +13,14 @@ class EmailService {
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
-      subject: '[Articoli e Social] Istruzioni di recupero password',
+      subject: '[Starter SAAS] Istruzioni di recupero password',
       html: emailText
     }
     const result = await transporter.sendMail(mailOptions)
     return result
   }
 
-  async sendActivationEmail (user) {
+  async sendActivationEmail(user) {
     const emailText = await pug.renderFile('views/mailer/confirm_account.pug', {
       email: user.email,
       confirmationToken: user.confirmationToken,
@@ -31,14 +30,14 @@ class EmailService {
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
-      subject: '[Articoli e Social] Istruzioni di attivazione account',
+      subject: '[Starter SAAS] Istruzioni di attivazione account',
       html: emailText
     }
     const result = await transporter.sendMail(mailOptions)
     return result
   }
 
-  async activated (user) {
+  async activated(user) {
     const emailText = await pug.renderFile('views/mailer/account_activated.pug', {
       email: user.email,
       frontendLoginURL: process.env.FRONTEND_LOGIN_URL,
@@ -47,14 +46,14 @@ class EmailService {
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
-      subject: '[Articoli e Social] Attivazione completata!',
+      subject: '[Starter SAAS] Attivazione completata!',
       html: emailText
     }
     const result = await transporter.sendMail(mailOptions)
     return result
   }
 
-  async passwordChanged (user) {
+  async passwordChanged(user) {
     const emailText = await pug.renderFile('views/mailer/password_changed.pug', {
       email: user.email,
       frontendLoginURL: process.env.FRONTEND_LOGIN_URL,
@@ -63,14 +62,14 @@ class EmailService {
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
-      subject: '[Articoli e Social] Password modificata con successo!',
+      subject: '[Starter SAAS] Password modificata con successo!',
       html: emailText
     }
     const result = await transporter.sendMail(mailOptions)
     return result
   }
 
-  async stripeNotification (user, subject, title, text) {
+  async stripeNotification(user, subject, title, text) {
     const emailText = pug.renderFile('views/mailer/generic.pug', {
       title: title,
       content: text
@@ -85,7 +84,7 @@ class EmailService {
     return result
   }
 
-  async generalNotification (toEmail, subject, title, text) {
+  async generalNotification(toEmail, subject, title, text) {
     const emailText = pug.renderFile('views/mailer/generic.pug', {
       title: title,
       content: text

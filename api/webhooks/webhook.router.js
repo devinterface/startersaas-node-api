@@ -1,7 +1,6 @@
-'use strict'
 import * as express from 'express'
-import webhookController from './webhook.controller'
-import { wrap } from '../../common/exceptions'
+import webhookController from './webhook.controller.js'
+import { wrap } from '../../common/exceptions.js'
 
 export default express
   .Router()
