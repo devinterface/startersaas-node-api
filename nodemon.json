@@ -1,0 +1,8 @@
+{
+  "verbose": true,
+  "ignore": [],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js"
+}
