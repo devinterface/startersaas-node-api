@@ -28,7 +28,7 @@ const schema = new localDatabase.Schema({
     type: Boolean,
     default: false
   },
-  periodEndsAt: Date
+  trialPeriodEndsAt: Date
 }, { timestamps: true })
 
 const Account = localDatabase.model('Account', schema, 'account')

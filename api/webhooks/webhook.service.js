@@ -5,11 +5,11 @@ import AccountService from '../accounts/account.service.js'
 import UserService from '../users/user.service.js'
 
 class WebhookService extends BaseService {
-  getModel() {
+  getModel () {
     return Webhook
   }
 
-  async handleWebhook(data) {
+  async handleWebhook (data) {
     this.create({ payload: data })
     switch (data.type) {
       case 'customer.subscription.updated':
@@ -36,7 +36,7 @@ class WebhookService extends BaseService {
     }
   }
 
-  async paymentSuccessful(data) {
+  async paymentSuccessful (data) {
     const stripeCustomerId = data.data.object.customer
     const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
     const user = await UserService.oneBy({ accountId: account.id })
@@ -46,7 +46,7 @@ class WebhookService extends BaseService {
     AccountService.generateInvoce(data, account, user)
   }
 
-  async newSubscription(data) {
+  async newSubscription (data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.status !== 'active') {
       return
@@ -57,7 +57,7 @@ class WebhookService extends BaseService {
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Nuovo abbonamento attivato', 'Nuovo abbonamento attivato', `${user.email} - ${account.subdomain} ha attivato un abbonamento`)
   }
 
-  async subscriptionUpdated(data) {
+  async subscriptionUpdated (data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.status !== 'active') {
       return
@@ -68,7 +68,7 @@ class WebhookService extends BaseService {
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Piano aggiornato', 'Piano aggiornato', `${user.email} - ${account.subdomain} ha un aggiornato un piano`)
   }
 
-  async paymentFailed(data) {
+  async paymentFailed (data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.payment_intent !== '' && data.data.object.payment_intent !== undefined) {
       return
@@ -80,7 +80,7 @@ class WebhookService extends BaseService {
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Pagamento fallito, Account sospeso', 'Pagamento fallito, Account sospeso', `${user.email} - ${account.subdomain} ha un pagamento fallito. Account sospeso.`)
   }
 
-  async trialWillEnd(data) {
+  async trialWillEnd (data) {
     const stripeCustomerId = data.data.object.customer
     const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
     const user = await UserService.oneBy({ accountId: account.id })
