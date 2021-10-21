@@ -42,7 +42,7 @@ class WebhookService extends BaseService {
     const user = await UserService.oneBy({ accountId: account.id })
     EmailService.stripeNotification(user, '[Starter SAAS] Pagamento completato', 'Pagamento completato', 'Congratulazioni, il tuo abbonamento a Articoli e Social è stato rinnovato')
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Pagamento completato', 'Pagamento completato', `${user.email} - ${account.subdomain} ha pagato un abbonamento`)
-    AccountService.update(account.id, { paymentFailed: false, active: true })
+    AccountService.update(account.id, { paymentFailed: false, active: true, paymentFailedFirstAt: null })
     AccountService.generateInvoce(data, account, user)
   }
 
@@ -75,7 +75,11 @@ class WebhookService extends BaseService {
     }
     const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
     const user = await UserService.oneBy({ accountId: account.id })
-    AccountService.update(account.id, { paymentFailed: true })
+    if (!account.paymentFailedFirstAt) {
+      AccountService.update(account.id, { paymentFailed: true, paymentFailedFirstAt: Date.now() })
+    } else {
+      AccountService.update(account.id, { paymentFailed: true })
+    }
     EmailService.stripeNotification(user, '[Starter SAAS] Pagamento fallito, account sospeso', 'Pagamento fallito', 'Siamo spiacenti ma per qualche ragione il tuo pagamento non è andato a buon fine. Sei pregato di aggiornare le tue informazioni di pagamento ')
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Pagamento fallito, Account sospeso', 'Pagamento fallito, Account sospeso', `${user.email} - ${account.subdomain} ha un pagamento fallito. Account sospeso.`)
   }
