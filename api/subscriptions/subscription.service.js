@@ -73,6 +73,10 @@ class SubscriptionService {
       } else {
         const sPlan = await stripe.plans.retrieve(planId)
 
+        for (const sb of sCustomer.subscriptions.data.filter(sub => sub.status !== 'active')) {
+          await stripe.subscriptions.del(sb.id)
+        }
+
         if (account.firstSubscription === true) {
           subscription = await stripe.subscriptions.create({
             customer: sCustomer.id,
