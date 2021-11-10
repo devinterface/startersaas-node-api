@@ -45,7 +45,8 @@ class UserValidator {
   async onResetPassword (obj) {
     const schema = Joi.object({
       password: Joi.string().min(8).required(),
-      passwordResetToken: Joi.string().required()
+      passwordResetToken: Joi.string().required(),
+      email: Joi.string().email().required()
     })
     const { error } = schema.validate(obj, { abortEarly: false })
     return error
@@ -61,7 +62,8 @@ class UserValidator {
 
   async onActivate (obj) {
     const schema = Joi.object({
-      token: Joi.string().required()
+      token: Joi.string().required(),
+      email: Joi.string().email().required()
     })
     const { error } = schema.validate(obj, { abortEarly: false })
     return error

@@ -17,12 +17,12 @@ class UsersService extends BaseService {
       const hash = bcrypt.hashSync(data.password, salt)
       data.password = hash
     } else {
-      data.passwordResetToken = uuidv4()
+      data.passwordResetToken = (Math.floor(100000 + Math.random() * 900000)).toString()
       data.passwordResetExpires = new Date(Date.now() + 3600000)
       sendForgot = true
     }
     if (!data.active) {
-      data.confirmationToken = uuidv4()
+      data.confirmationToken = (Math.floor(100000 + Math.random() * 900000)).toString()
       sendConfirm = true
     }
     data.sso = uuidv4()

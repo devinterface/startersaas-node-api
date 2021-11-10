@@ -13,7 +13,6 @@ const schema = new localDatabase.Schema({
     default: false
   },
   confirmationToken: String,
-  passwordConfirmation: String,
   passwordResetToken: String,
   passwordResetExpires: Date,
   sso: String,

@@ -32,8 +32,8 @@ class AuthService {
     return { account: account, user: user }
   }
 
-  async activate (token) {
-    const user = await User.findOneAndUpdate({ confirmationToken: token, active: false }, { confirmationToken: null, active: true }, { new: true })
+  async activate (token, email) {
+    const user = await User.findOneAndUpdate({ confirmationToken: token, active: false }, { confirmationToken: null, active: true, email: email }, { new: true })
     if (user) {
       EmailService.activated(user)
     }
@@ -51,7 +51,7 @@ class AuthService {
   async forgotPassword (email) {
     const user = await User.findOne({ email: email }).exec()
     if (user) {
-      user.passwordResetToken = uuidv4()
+      user.passwordResetToken = (Math.floor(100000 + Math.random() * 900000)).toString()
       user.passwordResetExpires = new Date(Date.now() + 3600000)
       await user.save()
       EmailService.forgotPasswordLink(user)
@@ -59,8 +59,8 @@ class AuthService {
     }
   }
 
-  async resetPassword (passwordResetToken, password) {
-    const user = await User.findOne({ passwordResetToken: passwordResetToken }).exec()
+  async resetPassword (passwordResetToken, password, email) {
+    const user = await User.findOne({ passwordResetToken: passwordResetToken, email: email }).exec()
     if (user) {
       const currentDate = new Date()
       const tokenExpDate = user.passwordResetExpires
@@ -71,7 +71,6 @@ class AuthService {
       const hash = bcrypt.hashSync(password.trim(), salt)
       user.password = hash
       await user.save()
-      EmailService.passwordChanged(user)
       return true
     }
     return false

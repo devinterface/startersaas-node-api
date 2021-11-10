@@ -63,7 +63,7 @@ class Controller {
         errors: userErrors.details
       })
     }
-    const user = await AuthService.activate(req.body.token)
+    const user = await AuthService.activate(req.body.token, req.body.email)
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -140,7 +140,7 @@ class Controller {
         errors: errors.details
       })
     }
-    const done = await AuthService.resetPassword(req.body.passwordResetToken, req.body.password)
+    const done = await AuthService.resetPassword(req.body.passwordResetToken, req.body.password, req.body.email)
     if (done) {
       return res.json({
         success: true,

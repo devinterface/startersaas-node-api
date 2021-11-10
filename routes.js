@@ -17,5 +17,5 @@ export default function routes (app) {
   app.use('/api/v1/users', passport.authenticate('jwt', { session: false }), userRouter)
   app.use('/api/v1/accounts', passport.authenticate('jwt', { session: false }), authorizeRequest([ROLE.ADMIN]), accountRouter)
   app.use('/api/v1/stripe/webhook', webhookRouter)
-  app.use('/api/v1/stripe', passport.authenticate('jwt', { session: false }), authorizeRequest([ROLE.ADMIN]), subscriptionRouter)
+  app.use('/api/v1/stripe', subscriptionRouter)
 }
