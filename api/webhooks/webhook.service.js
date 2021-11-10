@@ -43,7 +43,7 @@ class WebhookService extends BaseService {
     const user = await UserService.oneBy({ accountId: account.id })
     EmailService.stripeNotification(user, '[Starter SAAS] Pagamento completato', 'Pagamento completato', 'Congratulazioni, il tuo abbonamento a Articoli e Social è stato rinnovato')
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Pagamento completato', 'Pagamento completato', `${user.email} - ${account.subdomain} ha pagato un abbonamento`)
-    AccountService.update(account.id, { paymentFailed: false, active: true, paymentFailedFirstAt: null })
+    AccountService.update(account.id, { paymentFailed: false, active: true, paymentFailedFirstAt: null, paymentFailedSubscriptionEndsAt: null })
     AccountService.generateInvoce(data, account, user)
   }
 
@@ -77,12 +77,13 @@ class WebhookService extends BaseService {
     let account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
     const user = await UserService.oneBy({ accountId: account.id })
     if (!account.paymentFailedFirstAt) {
-      account = AccountService.update(account.id, { paymentFailed: true, paymentFailedFirstAt: Date.now() })
+      const paymentFailedSubscriptionEndsAt = moment(Date.now()).add(process.env.PAYMENT_FAILED_RETRY_DAYS, 'days')
+      account = AccountService.update(account.id, { paymentFailed: true, paymentFailedFirstAt: Date.now(), paymentFailedSubscriptionEndsAt: paymentFailedSubscriptionEndsAt })
     } else {
       account = AccountService.update(account.id, { paymentFailed: true })
     }
-    EmailService.stripeNotification(user, '[Starter SAAS] Pagamento fallito', 'Pagamento fallito', `Siamo spiacenti ma per qualche ragione il tuo pagamento non è andato a buon fine. Sei pregato di aggiornare le tue informazioni di pagamento. Il tuo account sarà sospeso il ${moment(account.paymentFailedFirstAt).add(process.env.PAYMENT_FAIL_AFTER_DAYS, 'days').format('DD/MM/YYYY')}`)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Pagamento fallito', 'Pagamento fallito', `${user.email} - ${account.subdomain} ha un pagamento fallito. L'account sospeso il ${moment(account.paymentFailedFirstAt).add(process.env.PAYMENT_FAIL_AFTER_DAYS, 'days').format('DD/MM/YYYY')}.`)
+    EmailService.stripeNotification(user, '[Starter SAAS] Pagamento fallito', 'Pagamento fallito', `Siamo spiacenti ma per qualche ragione il tuo pagamento non è andato a buon fine. Sei pregato di aggiornare le tue informazioni di pagamento. Il tuo account sarà sospeso il ${moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY')}`)
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Pagamento fallito', 'Pagamento fallito', `${user.email} - ${account.subdomain} ha un pagamento fallito. L'account sospeso il ${moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY')}.`)
   }
 
   async trialWillEnd (data) {

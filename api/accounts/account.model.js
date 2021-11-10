@@ -25,6 +25,7 @@ const schema = new localDatabase.Schema({
     default: false
   },
   paymentFailedFirstAt: Date,
+  paymentFailedSubscriptionEndsAt: Date,
   manualPayment: {
     type: Boolean,
     default: false

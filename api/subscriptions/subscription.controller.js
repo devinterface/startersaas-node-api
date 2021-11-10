@@ -1,5 +1,6 @@
 import SubscriptionService from './subscription.service.js'
 import SubscriptionValidator from './subscription.validator.js'
+import stripeConf from '../../stripe.conf.js'
 
 class Controller {
   async subscribe (req, res, next) {
@@ -76,6 +77,14 @@ class Controller {
     try {
       const sCustomer = await SubscriptionService.cancelSubscription(req.user.accountId, req.body.subscriptionId)
       return res.status(200).json(sCustomer)
+    } catch (error) {
+      return res.status(error.status).json(error)
+    }
+  }
+
+  async getPlans (req, res, next) {
+    try {
+      return res.status(200).json(stripeConf)
     } catch (error) {
       return res.status(error.status).json(error)
     }

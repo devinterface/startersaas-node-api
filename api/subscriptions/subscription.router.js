@@ -12,3 +12,4 @@ export default express
   .post('/cards', wrap(subscriptionController.addCreditCard))
   .delete('/cards', wrap(subscriptionController.removeCreditCard))
   .put('/cards', wrap(subscriptionController.setDefaultCreditCard))
+  .get('/plans', wrap(subscriptionController.getPlans))
