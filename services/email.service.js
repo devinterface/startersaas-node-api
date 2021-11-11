@@ -4,7 +4,7 @@ import Mustache from 'mustache'
 import * as fs from 'fs'
 
 class EmailService {
-  async forgotPasswordLink(user) {
+  async forgotPasswordLink (user) {
     const data = fs.readFileSync('views/mailer/forgot_password.html', 'utf8')
     const emailText = await Mustache.render(data, {
       email: user.email,
@@ -21,11 +21,11 @@ class EmailService {
     return result
   }
 
-  async sendActivationEmail(user) {
+  async sendActivationEmail (user) {
     const data = fs.readFileSync('views/mailer/activation_email.html', 'utf8')
     const emailText = await Mustache.render(data, {
       email: user.email,
-      confirmationToken: user.confirmationToken
+      confirmationToken: user.confirmationToken,
       t: i18n.t
     })
     const mailOptions = {
@@ -38,7 +38,7 @@ class EmailService {
     return result
   }
 
-  async activated(user) {
+  async activated (user) {
     const data = fs.readFileSync('views/mailer/activate.html', 'utf8')
     const emailText = await Mustache.render(data, {
       email: user.email,
@@ -55,7 +55,7 @@ class EmailService {
     return result
   }
 
-  async generalNotification(toEmail, subject, title, text) {
+  async generalNotification (toEmail, subject, title, text) {
     const data = fs.readFileSync('views/mailer/notification.html', 'utf8')
     const emailText = Mustache.render(data, {
       email: toEmail,
