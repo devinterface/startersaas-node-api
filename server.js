@@ -8,6 +8,8 @@ import compression from 'compression'
 import { handleException } from './common/exceptions.js'
 import cors from 'cors'
 import { setLang } from './middlewares/lang.middleware.js'
+import cron from 'node-cron'
+import SubscriptionService from './api/subscriptions/subscription.service.js'
 
 import './common/passport.js'
 
@@ -39,6 +41,16 @@ export default class ExpressServer {
   listen (port = process.env.PORT) {
     const welcome = p => () => l.info(`up and running in ${process.env.NODE_ENV || 'development'} @: ${os.hostname()} on port: ${p}}`)
     http.createServer(app).listen(port, welcome(port))
-    return app
+    return this
+  }
+
+  initCron () {
+    cron.schedule('1 0 * * *', () => {
+      SubscriptionService.runNotifyExpiringTrials()
+      SubscriptionService.runNotifyPaymentFailed()
+    }, {
+      scheduled: true
+    })
+    return this
   }
 }

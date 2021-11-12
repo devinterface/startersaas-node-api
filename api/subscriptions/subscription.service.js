@@ -3,6 +3,7 @@ import AccountService from '../accounts/account.service.js'
 import UserService from '../users/user.service.js'
 import moment from 'moment'
 import ApplicationError from '../../libs/errors/application.error.js'
+import EmailService from '../../services/email.service.js'
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY)
 
@@ -152,6 +153,24 @@ class SubscriptionService {
     await stripe.subscriptions.update(subscriptionId, { cancel_at_period_end: true })
     const sCustomer = await stripe.customers.retrieve(account.stripeCustomerId)
     return sCustomer
+  }
+
+  async runNotifyExpiringTrials () {
+    const accounts = await AccountService.find({ active: false, trialPeriodEndsAt: { $lt: moment(Date.now()).add(3, 'days'), $gt: Date.now() } })
+    for (const account of accounts) {
+      const user = await UserService.oneBy({ accountId: account.id })
+      const daysToExpire = Math.round(moment(account.trialPeriodEndsAt).diff(Date.now(), 'days', true))
+      EmailService.generalNotification(user.email, `[Starter SAAS] Trial version is expiring in ${daysToExpire} days`, `Trial version is expiring in ${daysToExpire} days`, `Dear user, your trial period is exipring in ${daysToExpire} days. Please login and subscribe to a plan.`)
+    }
+  }
+
+  async runNotifyPaymentFailed () {
+    const accounts = await AccountService.find({ active: true, paymentFailed: true, paymentFailedSubscriptionEndsAt: { $lt: moment(Date.now()).add(3, 'days'), $gt: Date.now() } })
+    for (const account of accounts) {
+      const user = await UserService.oneBy({ accountId: account.id })
+      const daysToExpire = Math.round(moment(account.paymentFailedSubscriptionEndsAt).diff(Date.now(), 'days', true))
+      EmailService.generalNotification(user.email, `[Starter SAAS] Subscription will be deactivated in ${daysToExpire} days`, `Subscription will be deactivated in ${daysToExpire} days`, `Dear user, due to a failed payment your subscription will be deactivated on ${moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY')}. Please login and check your credit card.`)
+    }
   }
 }
 
