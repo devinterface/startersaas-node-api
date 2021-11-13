@@ -40,7 +40,7 @@ class WebhookService extends BaseService {
     const user = await UserService.oneBy({ accountId: account.id })
     EmailService.generalNotification(user.email, '[Starter SAAS] Payment completed', 'Payment completed', 'Congratulations, your subscription has been renewed.')
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Payment completed', 'Payment completed', `${user.email} - ${account.subdomain} paid a subscription`)
-    AccountService.update(account.id, { paymentFailed: false, active: true, paymentFailedFirstAt: null, paymentFailedSubscriptionEndsAt: null })
+    AccountService.update(account.id, { paymentFailed: false, active: true, paymentFailedFirstAt: null, paymentFailedSubscriptionEndsAt: null, trialPeriodEndsAt: null })
     AccountService.generateInvoce(data, account, user)
   }
 

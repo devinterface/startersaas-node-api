@@ -16,10 +16,6 @@ const schema = new localDatabase.Schema({
     default: false
   },
   stripeCustomerId: String,
-  firstSubscription: {
-    type: Boolean,
-    default: true
-  },
   paymentFailed: {
     type: Boolean,
     default: false

@@ -72,26 +72,16 @@ class SubscriptionService {
         )
         return subscription
       } else {
-        const sPlan = await stripe.plans.retrieve(planId)
-
         for (const sb of sCustomer.subscriptions.data.filter(sub => sub.status !== 'active')) {
           await stripe.subscriptions.del(sb.id)
         }
 
-        if (account.firstSubscription === true) {
-          subscription = await stripe.subscriptions.create({
-            customer: sCustomer.id,
-            items: [{ plan: planId }],
-            expand: ['latest_invoice.payment_intent'],
-            trial_end: moment().add(sPlan.trial_period_days ? sPlan.trial_period_days : 0, 'days').unix()
-          })
-        } else {
-          subscription = await stripe.subscriptions.create({
-            customer: sCustomer.id,
-            items: [{ plan: planId }],
-            expand: ['latest_invoice.payment_intent']
-          })
-        }
+        subscription = await stripe.subscriptions.create({
+          customer: sCustomer.id,
+          items: [{ plan: planId }],
+          expand: ['latest_invoice.payment_intent']
+        })
+
         account.firstSubscription = false
         await account.save()
         return subscription
