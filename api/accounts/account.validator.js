@@ -4,7 +4,7 @@ import Joi from '@hapi/joi'
 class AccountValidator {
   async onSignup (obj) {
     const subdomainExists = await AccountService.oneBy({ subdomain: obj.subdomain })
-    const schemaKeys = {}
+    const schemaKeys = { privacyAccepted: Joi.boolean().required(), marketingAccepted: Joi.boolean().optional() }
     if (subdomainExists) {
       schemaKeys.subdomain = Joi.string().invalid(obj.subdomain).required()
     } else {
@@ -23,7 +23,8 @@ class AccountValidator {
       companySdi: Joi.string().allow('').optional(),
       companyPhone: Joi.string(),
       companyEmail: Joi.string(),
-      companyPec: Joi.string()
+      companyPec: Joi.string(),
+      marketingAccepted: Joi.boolean().optional()
     }
     const schema = Joi.object().keys(schemaKeys)
     const { error } = schema.validate(obj, { abortEarly: false })

@@ -10,7 +10,14 @@ const schema = new localDatabase.Schema({
   companyPec: String,
   companyPhone: String,
   companyEmail: String,
-
+  privacyAccepted: {
+    type: Boolean,
+    default: false
+  },
+  marketingAccepted: {
+    type: Boolean,
+    default: false
+  },
   active: {
     type: Boolean,
     default: false
