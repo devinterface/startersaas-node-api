@@ -31,7 +31,7 @@ class Controller {
       })
     }
     await AuthService.signup(accountData, userData)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Nuovo iscritto', `${userData.email} - si è appena iscritto`)
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] New subscriber', `${userData.email} - has been subscribed`)
     return res.json({
       success: true,
       message: 'Successfully sent activation email.'
