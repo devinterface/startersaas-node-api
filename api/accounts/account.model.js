@@ -33,7 +33,9 @@ const schema = new localDatabase.Schema({
     type: Boolean,
     default: false
   },
-  trialPeriodEndsAt: Date
+  trialPeriodEndsAt: Date,
+  stripePlanId: String,
+  subcriptionExpiresAt: Date
 }, { timestamps: true })
 
 const Account = localDatabase.model('Account', schema, 'account')
