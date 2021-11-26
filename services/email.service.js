@@ -1,16 +1,18 @@
 import i18n from '../common/i18n.js'
 import transporter from '../common/transporter.js'
-import Mustache from 'mustache'
+import { Liquid } from 'liquidjs'
 import * as fs from 'fs'
 
 class EmailService {
   async forgotPasswordLink (user) {
-    const data = fs.readFileSync('views/mailer/forgot_password.html', 'utf8')
-    const emailText = await Mustache.render(data, {
-      email: user.email,
-      passwordResetToken: user.passwordResetToken,
-      t: i18n.t
-    })
+    const data = fs.readFileSync('views/mailer/forgotPassword.email.liquid', 'utf8')
+    const engine = new Liquid()
+    const emailText = await engine
+      .parseAndRender(data, {
+        email: user.email,
+        passwordResetToken: user.passwordResetToken,
+        t: i18n.t
+      })
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
@@ -22,12 +24,13 @@ class EmailService {
   }
 
   async sendActivationEmail (user) {
-    const data = fs.readFileSync('views/mailer/activation_email.html', 'utf8')
-    const emailText = await Mustache.render(data, {
-      email: user.email,
-      confirmationToken: user.confirmationToken,
-      t: i18n.t
-    })
+    const data = fs.readFileSync('views/mailer/activationLink.email.liquid', 'utf8')
+    const engine = new Liquid()
+    const emailText = await engine
+      .parseAndRender(data, {
+        email: user.email,
+        confirmationToken: user.confirmationToken
+      })
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
@@ -39,12 +42,14 @@ class EmailService {
   }
 
   async activated (user) {
-    const data = fs.readFileSync('views/mailer/activate.html', 'utf8')
-    const emailText = await Mustache.render(data, {
-      email: user.email,
-      frontendLoginURL: process.env.FRONTEND_LOGIN_URL,
-      t: i18n.t
-    })
+    const data = fs.readFileSync('views/mailer/activate.email.liquid', 'utf8')
+    const engine = new Liquid()
+    const emailText = await engine
+      .parseAndRender(data, {
+        email: user.email,
+        frontendLoginURL: process.env.FRONTEND_LOGIN_URL,
+        t: i18n.t
+      })
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
@@ -55,14 +60,15 @@ class EmailService {
     return result
   }
 
-  async generalNotification (toEmail, subject, title, text) {
-    const data = fs.readFileSync('views/mailer/notification.html', 'utf8')
-    const emailText = Mustache.render(data, {
-      email: toEmail,
-      title: title,
-      content: text,
-      frontendLoginURL: process.env.FRONTEND_LOGIN_URL
-    })
+  async generalNotification (toEmail, subject, message) {
+    const data = fs.readFileSync('views/mailer/notification.email.liquid', 'utf8')
+    const engine = new Liquid()
+    const emailText = await engine
+      .parseAndRender(data, {
+        email: toEmail,
+        message: message,
+        frontendLoginURL: process.env.FRONTEND_LOGIN_URL
+      })
     const mailOptions = {
       to: toEmail,
       from: process.env.DEFAULT_EMAIL_FROM,

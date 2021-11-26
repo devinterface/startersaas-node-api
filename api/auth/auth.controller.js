@@ -7,7 +7,7 @@ import _ from 'lodash'
 import slugify from 'slugify'
 
 class Controller {
-  async signup(req, res, next) {
+  async signup (req, res, next) {
     const accountData = _.pick(req.body, ['subdomain', 'privacyAccepted', 'marketingAccepted'])
     accountData.subdomain = slugify(accountData.subdomain, {
       replacement: '-',
@@ -31,14 +31,14 @@ class Controller {
       })
     }
     await AuthService.signup(accountData, userData)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Nuovo iscritto', 'Iscrizione effettuata', `${userData.email} - si è appena iscritto`)
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Nuovo iscritto', `${userData.email} - si è appena iscritto`)
     return res.json({
       success: true,
       message: 'Successfully sent activation email.'
     })
   }
 
-  async manualSignup(req, res, next) {
+  async manualSignup (req, res, next) {
     const accountData = _.pick(req.body, ['subdomain'])
     accountData.subdomain = slugify(accountData.subdomain)
     const userData = _.pick(req.body, ['email', 'password'])
@@ -55,7 +55,7 @@ class Controller {
     })
   }
 
-  async activateAccount(req, res) {
+  async activateAccount (req, res) {
     const userErrors = await UserValidator.onActivate(req.body)
     if (userErrors) {
       return res.status(422).json({
@@ -75,7 +75,7 @@ class Controller {
     })
   }
 
-  async resendActivation(req, res) {
+  async resendActivation (req, res) {
     const errors = await UserValidator.onResendActivation(req.body)
     if (errors) {
       return res.status(422).json({
@@ -95,7 +95,7 @@ class Controller {
     })
   }
 
-  async login(req, res) {
+  async login (req, res) {
     const error = await UserValidator.onLogin(req.body)
     if (error) {
       return res.status(422).json(error.details)
@@ -112,7 +112,7 @@ class Controller {
     }
   }
 
-  async forgotPassword(req, res, next) {
+  async forgotPassword (req, res, next) {
     const errors = await UserValidator.forgotPassword(req.body)
     if (errors) {
       return res.status(422).json({
@@ -131,7 +131,7 @@ class Controller {
     })
   }
 
-  async resetPassword(req, res, next) {
+  async resetPassword (req, res, next) {
     const errors = await UserValidator.onResetPassword(req.body)
     if (errors) {
       return res.status(422).json({
@@ -154,7 +154,7 @@ class Controller {
     }
   }
 
-  async refreshToken(req, res) {
+  async refreshToken (req, res) {
     const token = await AuthService.login(req.user.email, null, true)
     if (token) {
       return res.json({
@@ -165,7 +165,7 @@ class Controller {
     }
   }
 
-  async deleteRefreshToken(req, res) {
+  async deleteRefreshToken (req, res) {
     if (await AuthService.checkRefreshToken(req.body.email, req.body.refreshToken)) {
       await AuthService.deleteToken(req.body.email)
       return res.json({
@@ -176,7 +176,7 @@ class Controller {
     return res.status(401).json({ message: 'Email or refresh token invalid' })
   }
 
-  async ssoLogin(req, res) {
+  async ssoLogin (req, res) {
     const error = await UserValidator.onSso(req.body)
     if (error) {
       return res.status(422).json(error.details)

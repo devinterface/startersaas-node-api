@@ -6,11 +6,11 @@ import UserService from '../users/user.service.js'
 import moment from 'moment'
 
 class WebhookService extends BaseService {
-  getModel () {
+  getModel() {
     return Webhook
   }
 
-  async handleWebhook (data) {
+  async handleWebhook(data) {
     this.create({ payload: data })
     switch (data.type) {
       case 'customer.subscription.updated':
@@ -34,28 +34,28 @@ class WebhookService extends BaseService {
     }
   }
 
-  async paymentSuccessful (data) {
+  async paymentSuccessful(data) {
     const stripeCustomerId = data.data.object.customer
     const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
     const user = await UserService.oneBy({ accountId: account.id })
-    EmailService.generalNotification(user.email, '[Starter SAAS] Payment completed', 'Payment completed', 'Congratulations, your subscription has been renewed.')
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Payment completed', 'Payment completed', `${user.email} - ${account.subdomain} paid a subscription`)
+    EmailService.generalNotification(user.email, '[Starter SAAS] Payment completed', 'Congratulations, your subscription has been renewed.')
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Payment completed', `${user.email} - ${account.subdomain} paid a subscription`)
     AccountService.update(account.id, { paymentFailed: false, active: true, paymentFailedFirstAt: null, paymentFailedSubscriptionEndsAt: null, trialPeriodEndsAt: null })
     AccountService.generateInvoce(data, account, user)
   }
 
-  async newSubscription (data) {
+  async newSubscription(data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.status !== 'active') {
       return
     }
     const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
     const user = await UserService.oneBy({ accountId: account.id })
-    EmailService.generalNotification(user.email, '[Starter SAAS] New subscription activated', 'New subscription activated', 'Congratulations, your subscription has been activated.')
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] New subscription activated', 'New subscription activated', `${user.email} - ${account.subdomain} activated a subscription.`)
+    EmailService.generalNotification(user.email, '[Starter SAAS] New subscription activated', 'Congratulations, your subscription has been activated.')
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] New subscription activated', `${user.email} - ${account.subdomain} activated a subscription.`)
   }
 
-  async subscriptionUpdated (data) {
+  async subscriptionUpdated(data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.status !== 'active') {
       return
@@ -66,11 +66,11 @@ class WebhookService extends BaseService {
     account.subcriptionExpiresAt = expiresAt ? moment.unix(expiresAt) : null
     account.stripePlanId = data.data.object.plan.id
     account.save()
-    EmailService.generalNotification(user.email, '[Starter SAAS] Subscription updated', 'Subscription updated', 'Congratulations, your subscription has been updated.')
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Subscription updated', 'Subscription updated', `${user.email} - ${account.subdomain} updated a subscription.`)
+    EmailService.generalNotification(user.email, '[Starter SAAS] Subscription updated', 'Congratulations, your subscription has been updated.')
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Subscription updated', `${user.email} - ${account.subdomain} updated a subscription.`)
   }
 
-  async paymentFailed (data) {
+  async paymentFailed(data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.payment_intent !== '' && data.data.object.payment_intent !== undefined) {
       return
@@ -83,8 +83,8 @@ class WebhookService extends BaseService {
     } else {
       account = await AccountService.update(account.id, { paymentFailed: true })
     }
-    EmailService.generalNotification(user.email, '[Starter SAAS] Payment failed', 'Payment failed', `Your payment wasn't successful. Please check your payment card and retry. Your subscription will be deactivated on ${moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY')}`)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Payment failed', 'Payment failed', `${user.email} - ${account.subdomain} has a failed payment. His subscription will be deactivated on ${moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY')}.`)
+    EmailService.generalNotification(user.email, '[Starter SAAS] Payment failed', `Your payment wasn't successful. Please check your payment card and retry. Your subscription will be deactivated on ${moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY')}`)
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Payment failed', `${user.email} - ${account.subdomain} has a failed payment. His subscription will be deactivated on ${moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY')}.`)
   }
 }
 
