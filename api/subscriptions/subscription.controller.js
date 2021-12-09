@@ -3,7 +3,7 @@ import SubscriptionValidator from './subscription.validator.js'
 import stripeConf from '../../stripe.conf.js'
 
 class Controller {
-  async subscribe (req, res, next) {
+  async subscribe(req, res, next) {
     const subscriptionErrors = await SubscriptionValidator.onCreate(req.body)
     if (subscriptionErrors) {
       return res.status(422).json({
@@ -19,7 +19,7 @@ class Controller {
     }
   }
 
-  async getCustomer (req, res, next) {
+  async getCustomer(req, res, next) {
     try {
       const sCustomer = await SubscriptionService.getCustomer(req.user.accountId)
       return res.status(200).json(sCustomer)
@@ -28,7 +28,7 @@ class Controller {
     }
   }
 
-  async getCustomerInvoices (req, res, next) {
+  async getCustomerInvoices(req, res, next) {
     try {
       const invoices = await SubscriptionService.getCustomerInvoices(req.user.accountId)
       return res.status(200).json(invoices)
@@ -37,7 +37,7 @@ class Controller {
     }
   }
 
-  async getCustomerCards (req, res, next) {
+  async getCustomerCards(req, res, next) {
     try {
       const invoices = await SubscriptionService.getCustomerCards(req.user.accountId)
       return res.status(200).json(invoices)
@@ -46,7 +46,16 @@ class Controller {
     }
   }
 
-  async addCreditCard (req, res, next) {
+  async createSetupIntent(req, res, next) {
+    try {
+      const setupIntent = await SubscriptionService.createSetupIntent(req.user.accountId)
+      return res.status(200).json(setupIntent)
+    } catch (error) {
+      return res.status(error.status).json(error)
+    }
+  }
+
+  async addCreditCard(req, res, next) {
     try {
       const sCustomer = await SubscriptionService.addCreditCard(req.user.accountId, req.body.sourceToken)
       return res.status(200).json(sCustomer)
@@ -55,7 +64,7 @@ class Controller {
     }
   }
 
-  async removeCreditCard (req, res, next) {
+  async removeCreditCard(req, res, next) {
     try {
       const sCustomer = await SubscriptionService.removeCreditCard(req.user.accountId, req.body.cardId)
       return res.status(200).json(sCustomer)
@@ -64,16 +73,17 @@ class Controller {
     }
   }
 
-  async setDefaultCreditCard (req, res, next) {
+  async setDefaultCreditCard(req, res, next) {
     try {
       const sCustomer = await SubscriptionService.setDefaultCreditCard(req.user.accountId, req.body.cardId)
       return res.status(200).json(sCustomer)
     } catch (error) {
+      console.log(error)
       return res.status(error.status).json(error)
     }
   }
 
-  async cancelSubscription (req, res, next) {
+  async cancelSubscription(req, res, next) {
     try {
       const sCustomer = await SubscriptionService.cancelSubscription(req.user.accountId, req.body.subscriptionId)
       return res.status(200).json(sCustomer)
@@ -82,7 +92,7 @@ class Controller {
     }
   }
 
-  async getPlans (req, res, next) {
+  async getPlans(req, res, next) {
     try {
       return res.status(200).json(stripeConf)
     } catch (error) {

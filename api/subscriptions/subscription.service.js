@@ -111,6 +111,16 @@ class SubscriptionService {
     return paymentMethods.data
   }
 
+  async createSetupIntent (accountId) {
+    const account = await AccountService.findById(accountId)
+    if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
+    const setupIntent = await stripe.setupIntents.create({
+      customer: account.stripeCustomerId,
+      payment_method_types: ['card']
+    })
+    return setupIntent
+  }
+
   async addCreditCard (accountId, sourceToken) {
     const account = await AccountService.findById(accountId)
     if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
@@ -129,11 +139,16 @@ class SubscriptionService {
   }
 
   async setDefaultCreditCard (accountId, cardId) {
-    const account = await AccountService.findById(accountId)
-    if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
-    await stripe.customers.update(account.stripeCustomerId, { default_source: cardId })
-    const sCustomer = await stripe.customers.retrieve(account.stripeCustomerId)
-    return sCustomer
+    try {
+      const account = await AccountService.findById(accountId)
+      if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
+      await stripe.customers.update(account.stripeCustomerId, { invoice_settings: { default_payment_method: cardId } })
+      const sCustomer = await stripe.customers.retrieve(account.stripeCustomerId)
+      return sCustomer
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
   }
 
   async cancelSubscription (accountId, subscriptionId) {
