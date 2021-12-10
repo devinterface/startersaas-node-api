@@ -129,19 +129,6 @@ class SubscriptionService {
     }
   }
 
-  async addCreditCard (accountId, sourceToken) {
-    try {
-      const account = await AccountService.findById(accountId)
-      if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
-      const source = await stripe.customers.createSource(account.stripeCustomerId, { source: sourceToken })
-      await stripe.customers.update(account.stripeCustomerId, { default_source: source.id })
-      const sCustomer = await stripe.customers.retrieve(account.stripeCustomerId)
-      return sCustomer
-    } catch (error) {
-      return new ApplicationError(error.message, {}, 500)
-    }
-  }
-
   async removeCreditCard (accountId, cardId) {
     try {
       const account = await AccountService.findById(accountId)
