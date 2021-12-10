@@ -13,7 +13,6 @@ export default express
   .get('/customers/me/invoices', passport.authenticate('jwt', { session: false }), authorizeRequest([ROLE.ADMIN]), wrap(subscriptionController.getCustomerInvoices))
   .get('/customers/me/cards', passport.authenticate('jwt', { session: false }), authorizeRequest([ROLE.ADMIN]), wrap(subscriptionController.getCustomerCards))
   .post('/createSetupIntent', passport.authenticate('jwt', { session: false }), authorizeRequest([ROLE.ADMIN]), wrap(subscriptionController.createSetupIntent))
-  .post('/cards', passport.authenticate('jwt', { session: false }), authorizeRequest([ROLE.ADMIN]), wrap(subscriptionController.addCreditCard))
   .delete('/cards', passport.authenticate('jwt', { session: false }), authorizeRequest([ROLE.ADMIN]), wrap(subscriptionController.removeCreditCard))
   .put('/cards', passport.authenticate('jwt', { session: false }), authorizeRequest([ROLE.ADMIN]), wrap(subscriptionController.setDefaultCreditCard))
   .get('/plans', wrap(subscriptionController.getPlans))
