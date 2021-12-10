@@ -12,7 +12,7 @@ class Controller {
       })
     }
     try {
-      const subscription = await SubscriptionService.subscribe(req.user.id, req.body.sourceToken, req.body.planId)
+      const subscription = await SubscriptionService.subscribe(req.user.id, req.body.planId)
       return res.status(200).json(subscription)
     } catch (error) {
       return res.status(error.status).json(error)
@@ -46,10 +46,10 @@ class Controller {
     }
   }
 
-  async addCreditCard (req, res, next) {
+  async createSetupIntent (req, res, next) {
     try {
-      const sCustomer = await SubscriptionService.addCreditCard(req.user.accountId, req.body.sourceToken)
-      return res.status(200).json(sCustomer)
+      const setupIntent = await SubscriptionService.createSetupIntent(req.user.accountId)
+      return res.status(200).json(setupIntent)
     } catch (error) {
       return res.status(error.status).json(error)
     }
