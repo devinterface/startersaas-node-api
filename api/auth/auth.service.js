@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import AccountService from '../accounts/account.service.js'
 import UserService from '../users/user.service.js'
-import EmailService from '../../services/email.service.js'
+import EmailService from '../emails/email.service.js'
 import ROLES from '../users/role.model.js'
 import moment from 'moment'
 
@@ -28,6 +28,7 @@ class AuthService {
     userData.email = userData.email.trim().toLowerCase()
     userData.role = ROLES.ADMIN
     const user = await UserService.create(userData)
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] New subscriber', `${userData.email} - has been subscribed`)
     return { account: account, user: user }
   }
 
@@ -37,6 +38,25 @@ class AuthService {
       EmailService.activated(user)
     }
     return user
+  }
+
+  async signupWithActivate (accountData, userData) {
+    accountData.subdomain = accountData.subdomain.toLowerCase()
+    accountData.periodEndsAt = moment().add(process.env.TRIAL_DAYS, 'days')
+    const account = await AccountService.create(accountData)
+    userData.accountId = account._id
+    userData.email = userData.email.trim().toLowerCase()
+    userData.role = ROLES.ADMIN
+
+    // signup and activate at the same time
+    userData.active = true
+
+    const user = await UserService.create(userData)
+
+    EmailService.activated(user)
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] New subscriber', `${userData.email} - has been subscribed`)
+    const token = await this.generateToken(user.email)
+    return { account: account, user: user, token: token }
   }
 
   async resendActivation (email) {
