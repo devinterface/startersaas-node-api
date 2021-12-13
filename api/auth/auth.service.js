@@ -42,7 +42,7 @@ class AuthService {
 
   async signupWithActivate (accountData, userData) {
     accountData.subdomain = accountData.subdomain.toLowerCase()
-    accountData.periodEndsAt = moment().add(process.env.TRIAL_DAYS, 'days')
+    accountData.trialPeriodEndsAt = moment().add(process.env.TRIAL_DAYS, 'days')
     const account = await AccountService.create(accountData)
     userData.accountId = account._id
     userData.email = userData.email.trim().toLowerCase()

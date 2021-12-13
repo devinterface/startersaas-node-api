@@ -10,8 +10,8 @@ class EmailService extends BaseService {
     return Email
   }
 
-  async loadEmail (code) {
-    let email = await this.oneBy({ code: code })
+  async loadEmail (code, lang = 'en') {
+    let email = await this.oneBy({ code: code, lang: lang })
     if (!email) {
       email = { body: fs.readFileSync(`views/mailer/${code}.email.liquid`, 'utf8') }
     }
@@ -19,18 +19,17 @@ class EmailService extends BaseService {
   }
 
   async forgotPasswordLink (user) {
-    const data = await this.loadEmail('forgotPassword')
+    const data = await this.loadEmail('forgotPassword', i18n.locale())
     const engine = new Liquid()
     const emailText = await engine
       .parseAndRender(data.body, {
         email: user.email,
-        passwordResetToken: user.passwordResetToken,
-        t: i18n.t
+        passwordResetToken: user.passwordResetToken
       })
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
-      subject: '[Starter SAAS] Reset password code',
+      subject: data.subject || '[Starter SAAS] Reset password code',
       html: emailText
     }
     const result = await transporter.sendMail(mailOptions)
@@ -38,7 +37,7 @@ class EmailService extends BaseService {
   }
 
   async sendActivationEmail (user) {
-    const data = await this.loadEmail('activationLink')
+    const data = await this.loadEmail('activationLink', i18n.locale())
     const engine = new Liquid()
     const emailText = await engine
       .parseAndRender(data.body, {
@@ -56,18 +55,17 @@ class EmailService extends BaseService {
   }
 
   async activated (user) {
-    const data = await this.loadEmail('activate')
+    const data = await this.loadEmail('activate', i18n.locale())
     const engine = new Liquid()
     const emailText = await engine
       .parseAndRender(data.body, {
         email: user.email,
-        frontendLoginURL: process.env.FRONTEND_LOGIN_URL,
-        t: i18n.t
+        frontendLoginURL: process.env.FRONTEND_LOGIN_URL
       })
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
-      subject: '[Starter SAAS] Account activated',
+      subject: data.subject || '[Starter SAAS] Account activated',
       html: emailText
     }
     const result = await transporter.sendMail(mailOptions)
@@ -75,7 +73,7 @@ class EmailService extends BaseService {
   }
 
   async generalNotification (toEmail, subject, message) {
-    const data = await this.loadEmail('notification')
+    const data = await this.loadEmail('notification', i18n.locale())
     const engine = new Liquid()
     const emailText = await engine
       .parseAndRender(data.body, {
