@@ -4,13 +4,14 @@ import EmailService from '../emails/email.service.js'
 import AccountService from '../accounts/account.service.js'
 import UserService from '../users/user.service.js'
 import moment from 'moment'
+import stripeConf from '../../stripe.conf.js'
 
 class WebhookService extends BaseService {
-  getModel() {
+  getModel () {
     return Webhook
   }
 
-  async handleWebhook(data) {
+  async handleWebhook (data) {
     this.create({ payload: data })
     switch (data.type) {
       case 'customer.subscription.updated':
@@ -30,7 +31,7 @@ class WebhookService extends BaseService {
     }
   }
 
-  async paymentSuccessful(data) {
+  async paymentSuccessful (data) {
     const stripeCustomerId = data.data.object.customer
     const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
     const user = await UserService.oneBy({ accountId: account.id })
@@ -40,7 +41,7 @@ class WebhookService extends BaseService {
     AccountService.generateInvoce(data, account, user)
   }
 
-  async newSubscription(data) {
+  async newSubscription (data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.status !== 'active') {
       return
@@ -51,7 +52,7 @@ class WebhookService extends BaseService {
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] New subscription activated', `${user.email} - ${account.subdomain} activated a subscription.`)
   }
 
-  async subscriptionUpdated(data) {
+  async subscriptionUpdated (data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.status !== 'active') {
       return
@@ -59,14 +60,15 @@ class WebhookService extends BaseService {
     const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
     const user = await UserService.oneBy({ accountId: account.id })
     const expiresAt = data.data.object.cancel_at
-    account.subcriptionExpiresAt = expiresAt ? moment.unix(expiresAt) : null
+    account.subscriptionExpiresAt = expiresAt ? moment.unix(expiresAt) : null
     account.stripePlanId = data.data.object.plan.id
+    account.planType = stripeConf.plans.find(p => p.id === data.data.object.plan.id).planType
     account.save()
     EmailService.generalNotification(user.email, '[Starter SAAS] Subscription updated', 'Congratulations, your subscription has been updated.')
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] Subscription updated', `${user.email} - ${account.subdomain} updated a subscription.`)
   }
 
-  async paymentFailed(data) {
+  async paymentFailed (data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.payment_intent !== '' && data.data.object.payment_intent !== undefined) {
       return
