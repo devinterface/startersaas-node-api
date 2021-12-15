@@ -4,11 +4,12 @@ import UserService from '../users/user.service.js'
 import moment from 'moment'
 import ApplicationError from '../../libs/errors/application.error.js'
 import EmailService from '../emails/email.service.js'
+import i18n from '../../common/i18n.js'
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY)
 
 class SubscriptionService {
-  async createCustomer(userId) {
+  async createCustomer (userId) {
     try {
       const user = await UserService.byId(userId)
       const account = await AccountService.findById(user.accountId)
@@ -34,7 +35,7 @@ class SubscriptionService {
     }
   }
 
-  async subscribe(userId, planId) {
+  async subscribe (userId, planId) {
     let sCustomer
 
     const user = await UserService.byId(userId)
@@ -82,7 +83,7 @@ class SubscriptionService {
     }
   }
 
-  async getCustomer(accountId) {
+  async getCustomer (accountId) {
     try {
       const account = await AccountService.findById(accountId)
       if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
@@ -93,7 +94,7 @@ class SubscriptionService {
     }
   }
 
-  async getCustomerInvoices(accountId) {
+  async getCustomerInvoices (accountId) {
     try {
       const account = await AccountService.findById(accountId)
       if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
@@ -104,7 +105,7 @@ class SubscriptionService {
     }
   }
 
-  async getCustomerCards(accountId) {
+  async getCustomerCards (accountId) {
     try {
       const account = await AccountService.findById(accountId)
       if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
@@ -115,7 +116,7 @@ class SubscriptionService {
     }
   }
 
-  async createSetupIntent(accountId) {
+  async createSetupIntent (accountId) {
     try {
       const account = await AccountService.findById(accountId)
       if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
@@ -129,7 +130,7 @@ class SubscriptionService {
     }
   }
 
-  async removeCreditCard(accountId, cardId) {
+  async removeCreditCard (accountId, cardId) {
     try {
       const account = await AccountService.findById(accountId)
       if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
@@ -141,7 +142,7 @@ class SubscriptionService {
     }
   }
 
-  async setDefaultCreditCard(accountId, cardId) {
+  async setDefaultCreditCard (accountId, cardId) {
     try {
       const account = await AccountService.findById(accountId)
       if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
@@ -157,7 +158,7 @@ class SubscriptionService {
     }
   }
 
-  async cancelSubscription(accountId, subscriptionId) {
+  async cancelSubscription (accountId, subscriptionId) {
     try {
       const account = await AccountService.findById(accountId)
       if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
@@ -169,21 +170,21 @@ class SubscriptionService {
     }
   }
 
-  async runNotifyExpiringTrials() {
+  async runNotifyExpiringTrials () {
     const accounts = await AccountService.find({ active: false, trialPeriodEndsAt: { $lt: moment(Date.now()).add(3, 'days'), $gt: Date.now() } })
     for (const account of accounts) {
       const user = await UserService.oneBy({ accountId: account.id })
       const daysToExpire = Math.round(moment(account.trialPeriodEndsAt).diff(Date.now(), 'days', true))
-      EmailService.generalNotification(user.email, `[Starter SAAS] Trial version is expiring in ${daysToExpire} days`, `Dear user, your trial period is exipring in ${daysToExpire} days. Please login and subscribe to a plan.`)
+      EmailService.generalNotification(user.email, i18n.t('subscriptionService.runNotifyExpiringTrials.subject', { daysToExpire: daysToExpire }), i18n.t('subscriptionService.runNotifyExpiringTrials.message', { daysToExpire: daysToExpire }))
     }
   }
 
-  async runNotifyPaymentFailed() {
+  async runNotifyPaymentFailed () {
     const accounts = await AccountService.find({ active: true, paymentFailed: true, paymentFailedSubscriptionEndsAt: { $lt: moment(Date.now()).add(3, 'days'), $gt: Date.now() } })
     for (const account of accounts) {
       const user = await UserService.oneBy({ accountId: account.id })
       const daysToExpire = Math.round(moment(account.paymentFailedSubscriptionEndsAt).diff(Date.now(), 'days', true))
-      EmailService.generalNotification(user.email, `[Starter SAAS] Subscription will be deactivated in ${daysToExpire} days`, `Dear user, due to a failed payment your subscription will be deactivated on ${moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY')}. Please login and check your credit card.`)
+      EmailService.generalNotification(user.email, i18n.t('subscriptionService.runNotifyPaymentFailed.subject', { daysToExpire: daysToExpire }), i18n.t('subscriptionService.runNotifyPaymentFailed.message', { date: moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY') }))
     }
   }
 }
