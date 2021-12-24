@@ -57,6 +57,8 @@ class SubscriptionService {
           {
             cancel_at_period_end: false,
             proration_behavior: 'always_invoice',
+            expand: ['latest_invoice.payment_intent'],
+            payment_behavior: 'default_incomplete',
             items: [{
               id: sCustomer.subscriptions.data[0].items.data[0].id,
               plan: planId
