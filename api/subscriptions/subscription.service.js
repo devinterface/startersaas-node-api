@@ -3,7 +3,8 @@ import AccountService from '../accounts/account.service.js'
 import UserService from '../users/user.service.js'
 import moment from 'moment'
 import ApplicationError from '../../libs/errors/application.error.js'
-import EmailService from '../../services/email.service.js'
+import EmailService from '../emails/email.service.js'
+import i18n from '../../common/i18n.js'
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY)
 
@@ -55,6 +56,9 @@ class SubscriptionService {
           sCustomer.subscriptions.data[0].id,
           {
             cancel_at_period_end: false,
+            proration_behavior: 'always_invoice',
+            expand: ['latest_invoice.payment_intent'],
+            payment_behavior: 'default_incomplete',
             items: [{
               id: sCustomer.subscriptions.data[0].items.data[0].id,
               plan: planId
@@ -174,7 +178,7 @@ class SubscriptionService {
     for (const account of accounts) {
       const user = await UserService.oneBy({ accountId: account.id })
       const daysToExpire = Math.round(moment(account.trialPeriodEndsAt).diff(Date.now(), 'days', true))
-      EmailService.generalNotification(user.email, `[Starter SAAS] Trial version is expiring in ${daysToExpire} days`, `Dear user, your trial period is exipring in ${daysToExpire} days. Please login and subscribe to a plan.`)
+      EmailService.generalNotification(user.email, i18n.t('subscriptionService.runNotifyExpiringTrials.subject', { daysToExpire: daysToExpire }), i18n.t('subscriptionService.runNotifyExpiringTrials.message', { daysToExpire: daysToExpire }))
     }
   }
 
@@ -183,7 +187,7 @@ class SubscriptionService {
     for (const account of accounts) {
       const user = await UserService.oneBy({ accountId: account.id })
       const daysToExpire = Math.round(moment(account.paymentFailedSubscriptionEndsAt).diff(Date.now(), 'days', true))
-      EmailService.generalNotification(user.email, `[Starter SAAS] Subscription will be deactivated in ${daysToExpire} days`, `Dear user, due to a failed payment your subscription will be deactivated on ${moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY')}. Please login and check your credit card.`)
+      EmailService.generalNotification(user.email, i18n.t('subscriptionService.runNotifyPaymentFailed.subject', { daysToExpire: daysToExpire }), i18n.t('subscriptionService.runNotifyPaymentFailed.message', { date: moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY') }))
     }
   }
 }

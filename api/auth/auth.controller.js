@@ -1,6 +1,5 @@
 import AuthService from './auth.service.js'
 import AccountService from '../accounts/account.service.js'
-import EmailService from '../../services/email.service.js'
 import UserValidator from '../users/user.validator.js'
 import AccountValidator from '../accounts/account.validator.js'
 import _ from 'lodash'
@@ -30,12 +29,13 @@ class Controller {
         errors: userErrors.details
       })
     }
-    await AuthService.signup(accountData, userData)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, '[Starter SAAS] New subscriber', `${userData.email} - has been subscribed`)
-    return res.json({
-      success: true,
-      message: 'Successfully sent activation email.'
-    })
+    if (process.env.SIGNUP_WITH_ACTIVATE) {
+      const signupResponse = await AuthService.signupWithActivate(accountData, userData)
+      return res.json(signupResponse)
+    } else {
+      const signupResponse = await AuthService.signup(accountData, userData)
+      return res.json(signupResponse)
+    }
   }
 
   async manualSignup (req, res, next) {

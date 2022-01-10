@@ -1,15 +1,15 @@
 import User from './user.model.js'
 import bcrypt from 'bcrypt'
 import BaseService from '../../services/base.service.js'
-import EmailService from '../../services/email.service.js'
+import EmailService from '../emails/email.service.js'
 import { v4 as uuidv4 } from 'uuid'
 
 class UsersService extends BaseService {
-  getModel () {
+  getModel() {
     return User
   }
 
-  async create (data) {
+  async create(data) {
     let sendForgot = false
     let sendConfirm = false
     if (data.password && data.password !== '') {
@@ -34,7 +34,7 @@ class UsersService extends BaseService {
     return user
   }
 
-  async updatePassword (userId, password) {
+  async updatePassword(userId, password) {
     const user = await this.byId(userId, {})
     const salt = bcrypt.genSaltSync(10)
     const hash = bcrypt.hashSync(password, salt)

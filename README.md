@@ -14,6 +14,12 @@ npm install
  
 Copy `.env.example` into `.env` and `stripe.conf.js.example` into `stripe.conf.js`.
 
+Store email templates on database by typing:
+
+```bash
+npm run store:emails
+```
+
 Finally, run the APIs by typing:
 
 ```bash
