@@ -129,6 +129,10 @@ class BaseService {
     return this.getModel().findOneAndDelete({ _id: id })
   }
 
+  async deleteMany (filter) {
+    return this.getModel().deleteMany(filter)
+  }
+
   async remove (id) {
     const result = await this.getModel().findById({ _id: id })
     result.remove()

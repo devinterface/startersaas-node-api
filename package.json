@@ -1,6 +1,6 @@
 {
   "name": "startersaas-node-api",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "Starter SAAS Node API",
   "license": "Apache 2.0 with Commons Clause",
   "author": "Stefano Mancini <stefano.mancini@devinterface.com> (https://www.devinterface.com)",
@@ -11,7 +11,7 @@
     "dev": "nodemon index.js | pino-pretty ",
     "prod": "node index.js | pino-pretty ",
     "linter": "standard --fix",
-    "migrate:users": "node -r scripts/migrateUsers | pino-pretty"
+    "store:emails": "node scripts/storeEmails.js | pino-pretty"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",

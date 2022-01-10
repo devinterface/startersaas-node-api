@@ -1,12 +1,12 @@
 import User from '../users/user.model.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
-import { v4 as uuidv4 } from 'uuid'
 import AccountService from '../accounts/account.service.js'
 import UserService from '../users/user.service.js'
-import EmailService from '../../services/email.service.js'
+import EmailService from '../emails/email.service.js'
 import ROLES from '../users/role.model.js'
 import moment from 'moment'
+import i18n from '../../common/i18n.js'
 
 class AuthService {
   async login (email, password, isRefresh = false) {
@@ -28,6 +28,7 @@ class AuthService {
     userData.email = userData.email.trim().toLowerCase()
     userData.role = ROLES.ADMIN
     const user = await UserService.create(userData)
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('authService.signup.subject'), i18n.t('authService.signup.messageAdmin', { email: userData.email, subdomain: accountData.subdomain }))
     return { account: account, user: user }
   }
 
@@ -37,6 +38,25 @@ class AuthService {
       EmailService.activated(user)
     }
     return user
+  }
+
+  async signupWithActivate (accountData, userData) {
+    accountData.subdomain = accountData.subdomain.toLowerCase()
+    accountData.trialPeriodEndsAt = moment().add(process.env.TRIAL_DAYS, 'days')
+    const account = await AccountService.create(accountData)
+    userData.accountId = account._id
+    userData.email = userData.email.trim().toLowerCase()
+    userData.role = ROLES.ADMIN
+
+    // signup and activate at the same time
+    userData.active = true
+
+    const user = await UserService.create(userData)
+
+    EmailService.activated(user)
+    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('authService.signup.subject'), i18n.t('authService.signup.messageAdmin', { email: userData.email, subdomain: accountData.subdomain }))
+    const token = await this.generateToken(user.email)
+    return { account: account, user: user, token: token }
   }
 
   async resendActivation (email) {

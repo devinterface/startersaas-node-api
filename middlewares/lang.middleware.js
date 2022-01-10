@@ -2,11 +2,11 @@ import i18n from '../common/i18n.js'
 
 const setLang = function (options) {
   return function (req, res, next) {
-    const lang = req.acceptsLanguages('en', 'it', 'fr', 'es', 'de')
-    if (lang) {
-      i18n.locale(lang)
+    const user = req.user
+    if (user) {
+      i18n.locale(user.language)
     } else {
-      i18n.locale('en')
+      i18n.locale(process.env.DEFAULT_LOCALE)
     }
     next()
   }
