@@ -17,7 +17,7 @@ const en = {
     },
     paymentFailed: {
       subject: '[Starter SAAS] Payment failed',
-      message: 'Your payment wasn\'t successful. Please go to this <a href="%{stripeHostedInvoiceUrl}" target="_blank">url</a> to pay your subscription. Your subscription will be deactivated on %{date}.',
+      message: 'Your payment wasn\'t successful. Please go to this <a href="%{stripeHostedInvoiceUrl}" target="_blank">url</a> to pay your subscription, otherwise your subscription will be deactivated on %{date}.',
       messageAdmin: '%{email} - %{subdomain} has a failed payment. His subscription will be deactivated on %{date}.'
     }
   },
