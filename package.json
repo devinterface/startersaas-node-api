@@ -1,6 +1,6 @@
 {
   "name": "startersaas-node-api",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Starter SAAS Node API",
   "license": "Apache 2.0 with Commons Clause",
   "author": "Stefano Mancini <stefano.mancini@devinterface.com> (https://www.devinterface.com)",
