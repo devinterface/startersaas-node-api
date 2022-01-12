@@ -178,7 +178,7 @@ class SubscriptionService {
     for (const account of accounts) {
       const user = await UserService.oneBy({ accountId: account.id })
       const daysToExpire = Math.round(moment(account.trialPeriodEndsAt).diff(Date.now(), 'days', true))
-      EmailService.generalNotification(user.email, i18n.t('subscriptionService.runNotifyExpiringTrials.subject', { daysToExpire: daysToExpire }), i18n.t('subscriptionService.runNotifyExpiringTrials.message', { daysToExpire: daysToExpire }))
+      EmailService.generalNotification(user.email, i18n.t('subscriptionService.runNotifyExpiringTrials.subject', { daysToExpire: daysToExpire }), i18n.t('subscriptionService.runNotifyExpiringTrials.message', { daysToExpire: daysToExpire }), user.language)
     }
   }
 
@@ -187,7 +187,7 @@ class SubscriptionService {
     for (const account of accounts) {
       const user = await UserService.oneBy({ accountId: account.id })
       const daysToExpire = Math.round(moment(account.paymentFailedSubscriptionEndsAt).diff(Date.now(), 'days', true))
-      EmailService.generalNotification(user.email, i18n.t('subscriptionService.runNotifyPaymentFailed.subject', { daysToExpire: daysToExpire }), i18n.t('subscriptionService.runNotifyPaymentFailed.message', { date: moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY') }))
+      EmailService.generalNotification(user.email, i18n.t('subscriptionService.runNotifyPaymentFailed.subject', { daysToExpire: daysToExpire }), i18n.t('subscriptionService.runNotifyPaymentFailed.message', { date: moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY') }), user.language)
     }
   }
 }
