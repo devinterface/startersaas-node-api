@@ -22,7 +22,8 @@ class UserValidator {
   async onSignup (obj) {
     const emailExists = await UserService.oneBy({ email: obj.email })
     const schemaKeys = {
-      password: Joi.string().min(8).required()
+      password: Joi.string().min(8).required(),
+      language: Joi.string()
     }
     if (emailExists) {
       schemaKeys.email = Joi.string().invalid(obj.email).required()

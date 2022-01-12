@@ -22,6 +22,7 @@ class Controller {
       })
     }
     const userData = _.pick(req.body, ['email', 'password'])
+    userData.language = req.body.language || process.env.DEFAULT_LOCALE
     const userErrors = await UserValidator.onSignup(userData)
     if (userErrors) {
       return res.status(422).json({

@@ -36,7 +36,7 @@ class WebhookService extends BaseService {
     const stripeCustomerId = data.data.object.customer
     const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
     const user = await UserService.oneBy({ accountId: account.id })
-    EmailService.generalNotification(user.email, i18n.t('webhookService.paymentSuccessful.subject'), i18n.t('webhookService.paymentSuccessful.message'))
+    EmailService.generalNotification(user.email, i18n.t('webhookService.paymentSuccessful.subject'), i18n.t('webhookService.paymentSuccessful.message'), user.language)
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('webhookService.paymentSuccessful.subject'), i18n.t('webhookService.paymentSuccessful.messageAdmin', { email: user.email, subdomain: account.subdomain }))
     AccountService.update(account.id, { paymentFailed: false, active: true, paymentFailedFirstAt: null, paymentFailedSubscriptionEndsAt: null, trialPeriodEndsAt: null })
     AccountService.generateInvoce(data, account, user)
@@ -54,7 +54,7 @@ class WebhookService extends BaseService {
     account.stripePlanId = data.data.object.plan.id
     account.planType = stripeConf.plans.find(p => p.id === data.data.object.plan.id).planType
     account.save()
-    EmailService.generalNotification(user.email, i18n.t('webhookService.newSubscription.subject'), i18n.t('webhookService.newSubscription.message'))
+    EmailService.generalNotification(user.email, i18n.t('webhookService.newSubscription.subject'), i18n.t('webhookService.newSubscription.message'), user.language)
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('webhookService.newSubscription.subject'), i18n.t('webhookService.newSubscription.messageAdmin', { email: user.email, subdomain: account.subdomain }))
   }
 
@@ -70,7 +70,7 @@ class WebhookService extends BaseService {
     account.stripePlanId = data.data.object.plan.id
     account.planType = stripeConf.plans.find(p => p.id === data.data.object.plan.id).planType
     account.save()
-    EmailService.generalNotification(user.email, i18n.t('webhookService.subscriptionUpdated.subject'), i18n.t('webhookService.subscriptionUpdated.message'))
+    EmailService.generalNotification(user.email, i18n.t('webhookService.subscriptionUpdated.subject'), i18n.t('webhookService.subscriptionUpdated.message'), user.language)
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('webhookService.subscriptionUpdated.subject'), i18n.t('webhookService.subscriptionUpdated.messageAdmin', { email: user.email, subdomain: account.subdomain }))
   }
 
@@ -89,7 +89,7 @@ class WebhookService extends BaseService {
       account = await AccountService.update(account.id, { paymentFailed: true })
     }
     const stripeHostedInvoiceUrl = data.data.object.hosted_invoice_url
-    EmailService.generalNotification(user.email, i18n.t('webhookService.paymentFailed.subject'), i18n.t('webhookService.paymentFailed.message', { date: moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY'), stripeHostedInvoiceUrl: stripeHostedInvoiceUrl }))
+    EmailService.generalNotification(user.email, i18n.t('webhookService.paymentFailed.subject'), i18n.t('webhookService.paymentFailed.message', { date: moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY'), stripeHostedInvoiceUrl: stripeHostedInvoiceUrl }), user.language)
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('webhookService.paymentFailed.subject'), i18n.t('webhookService.paymentFailed.messageAdmin', { email: user.email, subdomain: account.subdomain, date: moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY') }))
     // }
   }

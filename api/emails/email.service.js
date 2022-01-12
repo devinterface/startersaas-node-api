@@ -19,7 +19,7 @@ class EmailService extends BaseService {
   }
 
   async forgotPasswordLink (user) {
-    const data = await this.loadEmail('forgotPassword', i18n.locale())
+    const data = await this.loadEmail('forgotPassword', user.language)
     const engine = new Liquid()
     const emailText = await engine
       .parseAndRender(data.body, {
@@ -37,7 +37,7 @@ class EmailService extends BaseService {
   }
 
   async sendActivationEmail (user) {
-    const data = await this.loadEmail('activationLink', i18n.locale())
+    const data = await this.loadEmail('activationLink', user.language)
     const engine = new Liquid()
     const emailText = await engine
       .parseAndRender(data.body, {
@@ -55,7 +55,7 @@ class EmailService extends BaseService {
   }
 
   async activated (user) {
-    const data = await this.loadEmail('activate', i18n.locale())
+    const data = await this.loadEmail('activate', user.language)
     const engine = new Liquid()
     const emailText = await engine
       .parseAndRender(data.body, {
@@ -72,8 +72,8 @@ class EmailService extends BaseService {
     return result
   }
 
-  async generalNotification (toEmail, subject, message) {
-    const data = await this.loadEmail('notification', i18n.locale())
+  async generalNotification (toEmail, subject, message, locale = i18n.locale()) {
+    const data = await this.loadEmail('notification', locale)
     const engine = new Liquid()
     const emailText = await engine
       .parseAndRender(data.body, {

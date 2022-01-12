@@ -26,7 +26,6 @@ class UsersService extends BaseService {
       sendConfirm = true
     }
     data.sso = uuidv4()
-    data.language = process.env.DEFAULT_LOCALE
     const user = new User(data)
     await user.save()
     if (sendForgot) { EmailService.forgotPasswordLink(data) }
