@@ -4,7 +4,7 @@ This project contains everything you need to setup a fully featured SaaS API in 
 # Installation
 Make sure you have MongoDB (4+) installed and running.
 
-Then make sure you have Node installed. Version `14` or higher is required.
+Then make sure you have Node installed. Version `16` or higher is required.
 
 Install all dependencies by running 
 
