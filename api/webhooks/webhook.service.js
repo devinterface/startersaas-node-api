@@ -8,11 +8,11 @@ import stripeConf from '../../stripe.conf.js'
 import i18n from '../../common/i18n.js'
 
 class WebhookService extends BaseService {
-  getModel() {
+  getModel () {
     return Webhook
   }
 
-  async handleWebhook(data) {
+  async handleWebhook (data) {
     this.create({ payload: data })
     switch (data.type) {
       case 'customer.subscription.updated':
@@ -32,9 +32,10 @@ class WebhookService extends BaseService {
     }
   }
 
-  async paymentSuccessful(data) {
+  async paymentSuccessful (data) {
     const stripeCustomerId = data.data.object.customer
     const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
+    if (!account) { return }
     const user = await UserService.oneBy({ accountId: account.id })
     EmailService.generalNotification(user.email, i18n.t('webhookService.paymentSuccessful.subject'), i18n.t('webhookService.paymentSuccessful.message'), user.language)
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('webhookService.paymentSuccessful.subject'), i18n.t('webhookService.paymentSuccessful.messageAdmin', { email: user.email, subdomain: account.subdomain }))
@@ -42,12 +43,13 @@ class WebhookService extends BaseService {
     AccountService.generateInvoce(data, account, user)
   }
 
-  async newSubscription(data) {
+  async newSubscription (data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.status !== 'active') {
       return
     }
     const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
+    if (!account) { return }
     const user = await UserService.oneBy({ accountId: account.id })
     const expiresAt = data.data.object.cancel_at
     account.subscriptionExpiresAt = expiresAt ? moment.unix(expiresAt) : null
@@ -58,12 +60,13 @@ class WebhookService extends BaseService {
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('webhookService.newSubscription.subject'), i18n.t('webhookService.newSubscription.messageAdmin', { email: user.email, subdomain: account.subdomain }))
   }
 
-  async subscriptionUpdated(data) {
+  async subscriptionUpdated (data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.status !== 'active') {
       return
     }
     const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
+    if (!account) { return }
     const user = await UserService.oneBy({ accountId: account.id })
     const expiresAt = data.data.object.cancel_at
     account.subscriptionExpiresAt = expiresAt ? moment.unix(expiresAt) : null
@@ -74,13 +77,14 @@ class WebhookService extends BaseService {
     EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('webhookService.subscriptionUpdated.subject'), i18n.t('webhookService.subscriptionUpdated.messageAdmin', { email: user.email, subdomain: account.subdomain }))
   }
 
-  async paymentFailed(data) {
+  async paymentFailed (data) {
     const stripeCustomerId = data.data.object.customer
     if (data.data.object.payment_intent !== '' && data.data.object.payment_intent !== undefined && data.data.object.billing_reason !== 'subscription_update') {
       return
     }
     // if (data.data.object.attempt_count >= 1) {
     let account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
+    if (!account) { return }
     const user = await UserService.oneBy({ accountId: account.id })
     if (!account.paymentFailedFirstAt) {
       const paymentFailedSubscriptionEndsAt = moment(Date.now()).add(process.env.PAYMENT_FAILED_RETRY_DAYS, 'days')
