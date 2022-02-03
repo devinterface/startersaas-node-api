@@ -44,6 +44,8 @@ const schema = new localDatabase.Schema({
 schema.virtual('subscriptionStatus').get(function () {
   if (moment(this.trialPeriodEndsAt).isAfter(Date.now())) {
     return subscriptionTrial
+  } else if (this.trialPeriodEndsAt && moment(this.trialPeriodEndsAt).isBefore(Date.now())) {
+    return subscriptionDeactivated
   } else if (this.paymentFailed && moment(this.paymentFailedSubscriptionEndsAt).isAfter(Date.now())) {
     return subscriptionPaymentFailed
   } else if (this.paymentFailed && moment(this.paymentFailedSubscriptionEndsAt).isBefore(Date.now())) {
