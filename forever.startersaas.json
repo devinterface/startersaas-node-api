@@ -1,0 +1,10 @@
+{
+  "uid": "startersaas",
+  "max": 5,
+  "spinSleepTime": 1000,
+  "minUptime": 1000,
+  "append": true,
+  "watch": false,
+  "script": "index.js",
+  "command": "~/.nvm/versions/node/v16.13.2/bin/node index.js"
+}

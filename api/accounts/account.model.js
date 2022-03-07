@@ -1,4 +1,10 @@
 import localDatabase from '../../common/localDatabase.js'
+import moment from 'moment'
+
+const subscriptionTrial = 'trial'
+const subscriptionPaymentFailed = 'payment_failed'
+const subscriptionDeactivated = 'deactivated'
+const subscriptionActive = 'active'
 
 const schema = new localDatabase.Schema({
   subdomain: String,
@@ -18,10 +24,6 @@ const schema = new localDatabase.Schema({
     type: Boolean,
     default: false
   },
-  active: {
-    type: Boolean,
-    default: false
-  },
   stripeCustomerId: String,
   paymentFailed: {
     type: Boolean,
@@ -37,7 +39,23 @@ const schema = new localDatabase.Schema({
   stripePlanId: String,
   subscriptionExpiresAt: Date,
   planType: String
-}, { timestamps: true })
+}, { timestamps: true, toJSON: { virtuals: true } })
+
+schema.virtual('subscriptionStatus').get(function () {
+  if (moment(this.trialPeriodEndsAt).isAfter(Date.now())) {
+    return subscriptionTrial
+  } else if (this.trialPeriodEndsAt && moment(this.trialPeriodEndsAt).isBefore(Date.now())) {
+    return subscriptionDeactivated
+  } else if (this.paymentFailed && moment(this.paymentFailedSubscriptionEndsAt).isAfter(Date.now())) {
+    return subscriptionPaymentFailed
+  } else if (this.paymentFailed && moment(this.paymentFailedSubscriptionEndsAt).isBefore(Date.now())) {
+    return subscriptionDeactivated
+  } else if (moment(this.subscriptionExpiresAt).isBefore(Date.now())) {
+    return subscriptionDeactivated
+  } else {
+    return subscriptionActive
+  }
+})
 
 const Account = localDatabase.model('Account', schema, 'account')
 

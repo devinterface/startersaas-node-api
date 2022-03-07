@@ -174,7 +174,7 @@ class SubscriptionService {
   }
 
   async runNotifyExpiringTrials () {
-    const accounts = await AccountService.find({ active: false, trialPeriodEndsAt: { $lt: moment(Date.now()).add(3, 'days'), $gt: Date.now() } })
+    const accounts = await AccountService.find({ trialPeriodEndsAt: { $lt: moment(Date.now()).add(3, 'days'), $gt: Date.now() } })
     for (const account of accounts) {
       const user = await UserService.oneBy({ accountId: account.id })
       const daysToExpire = Math.round(moment(account.trialPeriodEndsAt).diff(Date.now(), 'days', true))
@@ -183,7 +183,7 @@ class SubscriptionService {
   }
 
   async runNotifyPaymentFailed () {
-    const accounts = await AccountService.find({ active: true, paymentFailed: true, paymentFailedSubscriptionEndsAt: { $lt: moment(Date.now()).add(3, 'days'), $gt: Date.now() } })
+    const accounts = await AccountService.find({ paymentFailed: true, paymentFailedSubscriptionEndsAt: { $lt: moment(Date.now()).add(3, 'days'), $gt: Date.now() } })
     for (const account of accounts) {
       const user = await UserService.oneBy({ accountId: account.id })
       const daysToExpire = Math.round(moment(account.paymentFailedSubscriptionEndsAt).diff(Date.now(), 'days', true))

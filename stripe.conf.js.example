@@ -1,34 +1,53 @@
 const stripeConf = {
-  publicKey: 'pk_test_xxx',
-  plans: [
+  publicKey: 'pk_test_XYZ',
+  "plans": [
     {
-      // Need to be the ID you will find once you defined the plan on Stripe !
-      id: 'price_xxx',
-      title: 'Starter - Piano Mensile',
-      price: 199,
-      currency: 'EUR',
-      features: ['Piano editoriale', '1 post Facebook', '1 post Instagram', '1 Facebook story', '1 Instagram story', '1 articolo per il blog', '-', '-', '-'],
-      monthly: true,
-      planType: 'starter'
+      "id": "price_XYZ",
+      "title": "Starter - Piano Mensile",
+      "price": 4.90,
+      "currency": "EUR",
+      "features": [
+        "1 project",
+        "0 tags",
+        "star entries",
+        "1 user",
+        "3 days data retention",
+        "no push notifications"
+      ],
+      "monthly": true,
+      "planType": "starter"
     },
     {
-      // Need to be the ID you will find once you defined the plan on Stripe !
-      id: 'price_xxx',
-      title: 'Base - Piano Mensile',
-      price: 399,
-      currency: 'EUR',
-      features: ['Piano editoriale', '2 post Facebook', '2 post Instagram', '2 Facebook stories', '2 Instagram stories', '2 articoli per il blog', '-', '-', '-'],
-      monthly: true
-      planType: 'basic'
+      "id": "price_XYZ",
+      "title": "Base - Piano Mensile",
+      "price": 9.90,
+      "currency": "EUR",
+      "features": [
+        "infinite projects",
+        "infinite tags",
+        "star entries",
+        "1 user",
+        "20 days data retention",
+        "no push notifications"
+      ],
+      "monthly": true,
+      "planType": "basic"
     },
     {
-      id: 'price_xxx',
-      title: 'Pro - Piano Mensile',
-      price: 699,
-      currency: 'EUR',
-      features: ['Piano editoriale', '4 post Facebook', '4 post Instagram', '4 Facebook stories', '4 Instagram stories', '4 articoli per il blog', 'Ottimizzazione pagine social', 'Post sponsorizzato (budget pubblicitario a carico del cliente)', 'Report mensile'],
-      monthly: true,
-      planType: 'pro'
+      "id": "price_XYZ",
+      "title": "Pro - Piano Mensile",
+      "price": 14.90,
+      "currency": "EUR",
+      "features": [
+        "infinite projects",
+        "infinite tags",
+        "star entries",
+        "1 user",
+        "50 days data retention",
+        "push notifications"
+      ],
+      "monthly": true,
+      "planType": "pro"
     }
   ]
 }
