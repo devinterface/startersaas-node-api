@@ -18,7 +18,7 @@ const stripeConf = {
       price: 399,
       currency: 'EUR',
       features: ['Piano editoriale', '2 post Facebook', '2 post Instagram', '2 Facebook stories', '2 Instagram stories', '2 articoli per il blog', '-', '-', '-'],
-      monthly: true
+      monthly: true,
       planType: 'basic'
     },
     {
