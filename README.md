@@ -2,28 +2,30 @@
 
 This project contains everything you need to setup a fully featured SaaS API in 5 minutes.
 # Installation
-Make sure you have MongoDB (4+) installed and running.
+Copy `.env.example` into `.env` and `stripe.conf.js.example` into `stripe.conf.js`.
 
-Then make sure you have Node installed. Version `16` or higher is required.
-
-Install all dependencies by running 
+Create a startersaas newtwork typing:
 
 ```bash
-npm install
+docker network create startersaas-network
 ```
- 
-Copy `.env.example` into `.env` and `stripe.conf.js.example` into `stripe.conf.js`.
+
+Then build the containers
+
+```bash
+docker compose build
+```
 
 Store email templates on database by typing:
 
 ```bash
-npm run store:emails
+docker compose run startersaas-node-api npm run store:emails
 ```
 
-Finally, run the APIs by typing:
+And finally, run the application
 
 ```bash
-npm run dev
+docker compose up
 ```
 
 
