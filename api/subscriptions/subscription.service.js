@@ -48,7 +48,9 @@ class SubscriptionService {
     try {
       sCustomer = await stripe.customers.retrieve(account.stripeCustomerId)
 
-      const haveSubscription = sCustomer.subscriptions.data.filter(sub => sub.status === 'active').length > 0
+      const haveSubscription =
+        sCustomer.subscriptions.data.filter(sub => sub.status === 'active')
+          .length > 0
 
       let subscription = null
       if (haveSubscription) {
@@ -59,15 +61,19 @@ class SubscriptionService {
             proration_behavior: 'always_invoice',
             expand: ['latest_invoice.payment_intent'],
             payment_behavior: 'default_incomplete',
-            items: [{
-              id: sCustomer.subscriptions.data[0].items.data[0].id,
-              plan: planId
-            }]
+            items: [
+              {
+                id: sCustomer.subscriptions.data[0].items.data[0].id,
+                plan: planId
+              }
+            ]
           }
         )
         return subscription
       } else {
-        for (const sb of sCustomer.subscriptions.data.filter(sub => sub.status !== 'active')) {
+        for (const sb of sCustomer.subscriptions.data.filter(
+          sub => sub.status !== 'active'
+        )) {
           await stripe.subscriptions.del(sb.id)
         }
 
@@ -89,8 +95,12 @@ class SubscriptionService {
   async getCustomer (accountId) {
     try {
       const account = await AccountService.findById(accountId)
-      if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
-      const sCustomer = await stripe.customers.retrieve(account.stripeCustomerId)
+      if (!account.stripeCustomerId) {
+        return new ApplicationError('User is not a stripe USER', {}, 500)
+      }
+      const sCustomer = await stripe.customers.retrieve(
+        account.stripeCustomerId
+      )
       return sCustomer
     } catch (error) {
       return new ApplicationError(error.message, {}, 500)
@@ -100,8 +110,12 @@ class SubscriptionService {
   async getCustomerInvoices (accountId) {
     try {
       const account = await AccountService.findById(accountId)
-      if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
-      const invoices = await stripe.invoices.list({ customer: account.stripeCustomerId })
+      if (!account.stripeCustomerId) {
+        return new ApplicationError('User is not a stripe USER', {}, 500)
+      }
+      const invoices = await stripe.invoices.list({
+        customer: account.stripeCustomerId
+      })
       return invoices.data
     } catch (error) {
       return new ApplicationError(error.message, {}, 500)
@@ -111,8 +125,13 @@ class SubscriptionService {
   async getCustomerCards (accountId) {
     try {
       const account = await AccountService.findById(accountId)
-      if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
-      const paymentMethods = await stripe.paymentMethods.list({ customer: account.stripeCustomerId, type: 'card' })
+      if (!account.stripeCustomerId) {
+        return new ApplicationError('User is not a stripe USER', {}, 500)
+      }
+      const paymentMethods = await stripe.paymentMethods.list({
+        customer: account.stripeCustomerId,
+        type: 'card'
+      })
       return paymentMethods.data
     } catch (error) {
       return new ApplicationError(error.message, {}, 500)
@@ -122,7 +141,9 @@ class SubscriptionService {
   async createSetupIntent (accountId) {
     try {
       const account = await AccountService.findById(accountId)
-      if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
+      if (!account.stripeCustomerId) {
+        return new ApplicationError('User is not a stripe USER', {}, 500)
+      }
       const setupIntent = await stripe.setupIntents.create({
         customer: account.stripeCustomerId,
         payment_method_types: ['card']
@@ -136,9 +157,13 @@ class SubscriptionService {
   async removeCreditCard (accountId, cardId) {
     try {
       const account = await AccountService.findById(accountId)
-      if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
+      if (!account.stripeCustomerId) {
+        return new ApplicationError('User is not a stripe USER', {}, 500)
+      }
       await stripe.paymentMethods.detach(cardId)
-      const sCustomer = await stripe.customers.retrieve(account.stripeCustomerId)
+      const sCustomer = await stripe.customers.retrieve(
+        account.stripeCustomerId
+      )
       return sCustomer
     } catch (error) {
       return new ApplicationError(error.message, {}, 500)
@@ -148,13 +173,17 @@ class SubscriptionService {
   async setDefaultCreditCard (accountId, cardId) {
     try {
       const account = await AccountService.findById(accountId)
-      if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
+      if (!account.stripeCustomerId) {
+        return new ApplicationError('User is not a stripe USER', {}, 500)
+      }
       await stripe.customers.update(account.stripeCustomerId, {
         invoice_settings: {
           default_payment_method: cardId
         }
       })
-      const sCustomer = await stripe.customers.retrieve(account.stripeCustomerId)
+      const sCustomer = await stripe.customers.retrieve(
+        account.stripeCustomerId
+      )
       return sCustomer
     } catch (error) {
       return new ApplicationError(error.message, {}, 500)
@@ -164,9 +193,15 @@ class SubscriptionService {
   async cancelSubscription (accountId, subscriptionId) {
     try {
       const account = await AccountService.findById(accountId)
-      if (!account.stripeCustomerId) { return new ApplicationError('User is not a stripe USER', {}, 500) }
-      await stripe.subscriptions.update(subscriptionId, { cancel_at_period_end: true })
-      const sCustomer = await stripe.customers.retrieve(account.stripeCustomerId)
+      if (!account.stripeCustomerId) {
+        return new ApplicationError('User is not a stripe USER', {}, 500)
+      }
+      await stripe.subscriptions.update(subscriptionId, {
+        cancel_at_period_end: true
+      })
+      const sCustomer = await stripe.customers.retrieve(
+        account.stripeCustomerId
+      )
       return sCustomer
     } catch (error) {
       return new ApplicationError(error.message, {}, 500)
@@ -174,20 +209,65 @@ class SubscriptionService {
   }
 
   async runNotifyExpiringTrials () {
-    const accounts = await AccountService.find({ trialPeriodEndsAt: { $lt: moment(Date.now()).add(3, 'days'), $gt: Date.now() } })
+    const accounts = await AccountService.find({
+      trialPeriodEndsAt: {
+        $lt: moment(Date.now()).add(3, 'days'),
+        $gt: Date.now()
+      }
+    })
     for (const account of accounts) {
-      const user = await UserService.oneBy({ accountId: account.id })
-      const daysToExpire = Math.round(moment(account.trialPeriodEndsAt).diff(Date.now(), 'days', true))
-      EmailService.generalNotification(user.email, i18n.t('subscriptionService.runNotifyExpiringTrials.subject', { daysToExpire: daysToExpire }), i18n.t('subscriptionService.runNotifyExpiringTrials.message', { daysToExpire: daysToExpire }), user.language)
+      const user = await UserService.oneBy({
+        accountId: account.id,
+        accountOwner: true
+      })
+      const daysToExpire = Math.round(
+        moment(account.trialPeriodEndsAt).diff(Date.now(), 'days', true)
+      )
+      EmailService.generalNotification(
+        user.email,
+        i18n.t('subscriptionService.runNotifyExpiringTrials.subject', {
+          daysToExpire: daysToExpire
+        }),
+        i18n.t('subscriptionService.runNotifyExpiringTrials.message', {
+          daysToExpire: daysToExpire
+        }),
+        user.language
+      )
     }
   }
 
   async runNotifyPaymentFailed () {
-    const accounts = await AccountService.find({ paymentFailed: true, paymentFailedSubscriptionEndsAt: { $lt: moment(Date.now()).add(3, 'days'), $gt: Date.now() } })
+    const accounts = await AccountService.find({
+      paymentFailed: true,
+      paymentFailedSubscriptionEndsAt: {
+        $lt: moment(Date.now()).add(3, 'days'),
+        $gt: Date.now()
+      }
+    })
     for (const account of accounts) {
-      const user = await UserService.oneBy({ accountId: account.id })
-      const daysToExpire = Math.round(moment(account.paymentFailedSubscriptionEndsAt).diff(Date.now(), 'days', true))
-      EmailService.generalNotification(user.email, i18n.t('subscriptionService.runNotifyPaymentFailed.subject', { daysToExpire: daysToExpire }), i18n.t('subscriptionService.runNotifyPaymentFailed.message', { date: moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY') }), user.language)
+      const user = await UserService.oneBy({
+        accountId: account.id,
+        accountOwner: true
+      })
+      const daysToExpire = Math.round(
+        moment(account.paymentFailedSubscriptionEndsAt).diff(
+          Date.now(),
+          'days',
+          true
+        )
+      )
+      EmailService.generalNotification(
+        user.email,
+        i18n.t('subscriptionService.runNotifyPaymentFailed.subject', {
+          daysToExpire: daysToExpire
+        }),
+        i18n.t('subscriptionService.runNotifyPaymentFailed.message', {
+          date: moment(account.paymentFailedSubscriptionEndsAt).format(
+            'DD/MM/YYYY'
+          )
+        }),
+        user.language
+      )
     }
   }
 }

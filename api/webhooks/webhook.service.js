@@ -34,12 +34,37 @@ class WebhookService extends BaseService {
 
   async paymentSuccessful (data) {
     const stripeCustomerId = data.data.object.customer
-    const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
-    if (!account) { return }
-    const user = await UserService.oneBy({ accountId: account.id })
-    EmailService.generalNotification(user.email, i18n.t('webhookService.paymentSuccessful.subject'), i18n.t('webhookService.paymentSuccessful.message'), user.language)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('webhookService.paymentSuccessful.subject'), i18n.t('webhookService.paymentSuccessful.messageAdmin', { email: user.email, subdomain: account.subdomain }))
-    AccountService.update(account.id, { paymentFailed: false, active: true, paymentFailedFirstAt: null, paymentFailedSubscriptionEndsAt: null, trialPeriodEndsAt: null })
+    const account = await AccountService.oneBy({
+      stripeCustomerId: stripeCustomerId
+    })
+    if (!account) {
+      return
+    }
+    const user = await UserService.oneBy({
+      accountId: account.id,
+      accountOwner: true
+    })
+    EmailService.generalNotification(
+      user.email,
+      i18n.t('webhookService.paymentSuccessful.subject'),
+      i18n.t('webhookService.paymentSuccessful.message'),
+      user.language
+    )
+    EmailService.generalNotification(
+      process.env.NOTIFIED_ADMIN_EMAIL,
+      i18n.t('webhookService.paymentSuccessful.subject'),
+      i18n.t('webhookService.paymentSuccessful.messageAdmin', {
+        email: user.email,
+        subdomain: account.subdomain
+      })
+    )
+    AccountService.update(account.id, {
+      paymentFailed: false,
+      active: true,
+      paymentFailedFirstAt: null,
+      paymentFailedSubscriptionEndsAt: null,
+      trialPeriodEndsAt: null
+    })
     AccountService.generateInvoce(data, account, user)
   }
 
@@ -48,16 +73,37 @@ class WebhookService extends BaseService {
     if (data.data.object.status !== 'active') {
       return
     }
-    const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
-    if (!account) { return }
-    const user = await UserService.oneBy({ accountId: account.id })
+    const account = await AccountService.oneBy({
+      stripeCustomerId: stripeCustomerId
+    })
+    if (!account) {
+      return
+    }
+    const user = await UserService.oneBy({
+      accountId: account.id,
+      accountOwner: true
+    })
     const expiresAt = data.data.object.cancel_at
     account.subscriptionExpiresAt = expiresAt ? moment.unix(expiresAt) : null
     account.stripePlanId = data.data.object.plan.id
-    account.planType = stripeConf.plans.find(p => p.id === data.data.object.plan.id).planType
+    account.planType = stripeConf.plans.find(
+      p => p.id === data.data.object.plan.id
+    ).planType
     account.save()
-    EmailService.generalNotification(user.email, i18n.t('webhookService.newSubscription.subject'), i18n.t('webhookService.newSubscription.message'), user.language)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('webhookService.newSubscription.subject'), i18n.t('webhookService.newSubscription.messageAdmin', { email: user.email, subdomain: account.subdomain }))
+    EmailService.generalNotification(
+      user.email,
+      i18n.t('webhookService.newSubscription.subject'),
+      i18n.t('webhookService.newSubscription.message'),
+      user.language
+    )
+    EmailService.generalNotification(
+      process.env.NOTIFIED_ADMIN_EMAIL,
+      i18n.t('webhookService.newSubscription.subject'),
+      i18n.t('webhookService.newSubscription.messageAdmin', {
+        email: user.email,
+        subdomain: account.subdomain
+      })
+    )
   }
 
   async subscriptionUpdated (data) {
@@ -65,36 +111,95 @@ class WebhookService extends BaseService {
     if (data.data.object.status !== 'active') {
       return
     }
-    const account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
-    if (!account) { return }
-    const user = await UserService.oneBy({ accountId: account.id })
+    const account = await AccountService.oneBy({
+      stripeCustomerId: stripeCustomerId
+    })
+    if (!account) {
+      return
+    }
+    const user = await UserService.oneBy({
+      accountId: account.id,
+      accountOwner: true
+    })
     const expiresAt = data.data.object.cancel_at
     account.subscriptionExpiresAt = expiresAt ? moment.unix(expiresAt) : null
     account.stripePlanId = data.data.object.plan.id
-    account.planType = stripeConf.plans.find(p => p.id === data.data.object.plan.id).planType
+    account.planType = stripeConf.plans.find(
+      p => p.id === data.data.object.plan.id
+    ).planType
     account.save()
-    EmailService.generalNotification(user.email, i18n.t('webhookService.subscriptionUpdated.subject'), i18n.t('webhookService.subscriptionUpdated.message'), user.language)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('webhookService.subscriptionUpdated.subject'), i18n.t('webhookService.subscriptionUpdated.messageAdmin', { email: user.email, subdomain: account.subdomain }))
+    EmailService.generalNotification(
+      user.email,
+      i18n.t('webhookService.subscriptionUpdated.subject'),
+      i18n.t('webhookService.subscriptionUpdated.message'),
+      user.language
+    )
+    EmailService.generalNotification(
+      process.env.NOTIFIED_ADMIN_EMAIL,
+      i18n.t('webhookService.subscriptionUpdated.subject'),
+      i18n.t('webhookService.subscriptionUpdated.messageAdmin', {
+        email: user.email,
+        subdomain: account.subdomain
+      })
+    )
   }
 
   async paymentFailed (data) {
     const stripeCustomerId = data.data.object.customer
-    if (data.data.object.payment_intent !== '' && data.data.object.payment_intent !== undefined && data.data.object.billing_reason !== 'subscription_update') {
+    if (
+      data.data.object.payment_intent !== '' &&
+      data.data.object.payment_intent !== undefined &&
+      data.data.object.billing_reason !== 'subscription_update'
+    ) {
       return
     }
     // if (data.data.object.attempt_count >= 1) {
-    let account = await AccountService.oneBy({ stripeCustomerId: stripeCustomerId })
-    if (!account) { return }
-    const user = await UserService.oneBy({ accountId: account.id })
+    let account = await AccountService.oneBy({
+      stripeCustomerId: stripeCustomerId
+    })
+    if (!account) {
+      return
+    }
+    const user = await UserService.oneBy({
+      accountId: account.id,
+      accountOwner: true
+    })
     if (!account.paymentFailedFirstAt) {
-      const paymentFailedSubscriptionEndsAt = moment(Date.now()).add(process.env.PAYMENT_FAILED_RETRY_DAYS, 'days')
-      account = await AccountService.update(account.id, { paymentFailed: true, paymentFailedFirstAt: Date.now(), paymentFailedSubscriptionEndsAt: paymentFailedSubscriptionEndsAt })
+      const paymentFailedSubscriptionEndsAt = moment(Date.now()).add(
+        process.env.PAYMENT_FAILED_RETRY_DAYS,
+        'days'
+      )
+      account = await AccountService.update(account.id, {
+        paymentFailed: true,
+        paymentFailedFirstAt: Date.now(),
+        paymentFailedSubscriptionEndsAt: paymentFailedSubscriptionEndsAt
+      })
     } else {
       account = await AccountService.update(account.id, { paymentFailed: true })
     }
     const stripeHostedInvoiceUrl = data.data.object.hosted_invoice_url
-    EmailService.generalNotification(user.email, i18n.t('webhookService.paymentFailed.subject'), i18n.t('webhookService.paymentFailed.message', { date: moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY'), stripeHostedInvoiceUrl: stripeHostedInvoiceUrl }), user.language)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('webhookService.paymentFailed.subject'), i18n.t('webhookService.paymentFailed.messageAdmin', { email: user.email, subdomain: account.subdomain, date: moment(account.paymentFailedSubscriptionEndsAt).format('DD/MM/YYYY') }))
+    EmailService.generalNotification(
+      user.email,
+      i18n.t('webhookService.paymentFailed.subject'),
+      i18n.t('webhookService.paymentFailed.message', {
+        date: moment(account.paymentFailedSubscriptionEndsAt).format(
+          'DD/MM/YYYY'
+        ),
+        stripeHostedInvoiceUrl: stripeHostedInvoiceUrl
+      }),
+      user.language
+    )
+    EmailService.generalNotification(
+      process.env.NOTIFIED_ADMIN_EMAIL,
+      i18n.t('webhookService.paymentFailed.subject'),
+      i18n.t('webhookService.paymentFailed.messageAdmin', {
+        email: user.email,
+        subdomain: account.subdomain,
+        date: moment(account.paymentFailedSubscriptionEndsAt).format(
+          'DD/MM/YYYY'
+        )
+      })
+    )
     // }
   }
 }

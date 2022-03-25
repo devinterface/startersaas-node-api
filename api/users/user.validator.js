@@ -22,13 +22,19 @@ class UserValidator {
   async onSignup (obj) {
     const emailExists = await UserService.oneBy({ email: obj.email })
     const schemaKeys = {
-      password: Joi.string().min(8).required(),
+      password: Joi.string()
+        .min(8)
+        .required(),
       language: Joi.string()
     }
     if (emailExists) {
-      schemaKeys.email = Joi.string().invalid(obj.email).required()
+      schemaKeys.email = Joi.string()
+        .invalid(obj.email)
+        .required()
     } else {
-      schemaKeys.email = Joi.string().email().required()
+      schemaKeys.email = Joi.string()
+        .email()
+        .required()
     }
     const schema = Joi.object().keys(schemaKeys)
     const { error } = schema.validate(obj, { abortEarly: false })
@@ -45,9 +51,13 @@ class UserValidator {
 
   async onResetPassword (obj) {
     const schema = Joi.object({
-      password: Joi.string().min(8).required(),
+      password: Joi.string()
+        .min(8)
+        .required(),
       passwordResetToken: Joi.string().required(),
-      email: Joi.string().email().required()
+      email: Joi.string()
+        .email()
+        .required()
     })
     const { error } = schema.validate(obj, { abortEarly: false })
     return error
@@ -55,7 +65,9 @@ class UserValidator {
 
   async onResetMyPassword (obj) {
     const schema = Joi.object({
-      password: Joi.string().min(8).required()
+      password: Joi.string()
+        .min(8)
+        .required()
     })
     const { error } = schema.validate(obj, { abortEarly: false })
     return error
@@ -64,7 +76,9 @@ class UserValidator {
   async onActivate (obj) {
     const schema = Joi.object({
       token: Joi.string().required(),
-      email: Joi.string().email().required()
+      email: Joi.string()
+        .email()
+        .required()
     })
     const { error } = schema.validate(obj, { abortEarly: false })
     return error
@@ -82,8 +96,8 @@ class UserValidator {
     const schemaKeys = {
       name: Joi.string(),
       surname: Joi.string(),
-      role: Joi.string(),
-      active: Joi.boolean()
+      language: Joi.any().allow('it', 'en'),
+      role: Joi.any().allow('user', 'admin')
     }
     const schema = Joi.object().keys(schemaKeys)
     const { error } = schema.validate(obj, { abortEarly: false })
@@ -94,7 +108,7 @@ class UserValidator {
     const schemaKeys = {
       name: Joi.string(),
       surname: Joi.string(),
-      language: Joi.string()
+      language: Joi.any().allow('it', 'en')
     }
     const schema = Joi.object().keys(schemaKeys)
     const { error } = schema.validate(obj, { abortEarly: false })
@@ -106,15 +120,18 @@ class UserValidator {
     const schemaKeys = {
       name: Joi.string(),
       surname: Joi.string(),
-      language: Joi.string(),
-      role: Joi.string(),
-      password: Joi.string(),
-      active: Joi.boolean()
+      language: Joi.any().allow('it', 'en'),
+      role: Joi.any().allow('user', 'admin'),
+      password: Joi.string()
     }
     if (emailExists) {
-      schemaKeys.email = Joi.string().invalid(obj.email).required()
+      schemaKeys.email = Joi.string()
+        .invalid(obj.email)
+        .required()
     } else {
-      schemaKeys.email = Joi.string().email().required()
+      schemaKeys.email = Joi.string()
+        .email()
+        .required()
     }
     const schema = Joi.object().keys(schemaKeys)
     const { error } = schema.validate(obj, { abortEarly: false })

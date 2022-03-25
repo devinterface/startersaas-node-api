@@ -5,7 +5,10 @@ import _ from 'lodash'
 
 class Controller {
   async byId (req, res) {
-    const user = await UserService.byId(req.params.id)
+    const user = await UserService.oneBy({
+      _id: req.params.id,
+      accountId: req.user.accountId
+    })
     if (user) res.json(user)
     else res.status(404).end()
   }
@@ -47,7 +50,14 @@ class Controller {
         errors: errors.details
       })
     }
-    const userData = _.pick(req.body, ['email', 'password', 'name', 'surname', 'language', 'active', 'role'])
+    const userData = _.pick(req.body, [
+      'email',
+      'password',
+      'name',
+      'surname',
+      'language',
+      'role'
+    ])
     userData.email = userData.email.trim()
     userData.accountId = req.user.accountId
     const user = await UserService.create(userData)
@@ -73,8 +83,12 @@ class Controller {
         errors: errors.details
       })
     }
-    const userData = _.pick(req.body, ['name', 'surname', 'role', 'language', 'active'])
-    const result = await UserService.update(req.params.id, userData)
+    const userData = _.pick(req.body, ['name', 'surname', 'role', 'language'])
+    const result = await UserService.update(
+      req.params.id,
+      req.user.accountId,
+      userData
+    )
     if (result) {
       return res.json(result)
     } else {
@@ -87,7 +101,7 @@ class Controller {
 
   async delete (req, res) {
     if (req.params.id !== req.user.id) {
-      await UserService.delete(req.params.id)
+      await UserService.delete(req.params.id, req.user.accountId)
       return res.json({
         success: true,
         message: 'User delete successfully.'
