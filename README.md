@@ -28,6 +28,11 @@ And finally, run the application
 docker compose up
 ```
 
+Application will be reachable on 
+
+```bash
+http://localhost:3000
+```
 
 # Stripe setup
 
@@ -44,6 +49,12 @@ invoice.payment_succeeded
 invoice.payment_failed
 customer.subscription.created
 customer.subscription.updated
+```
+
+For local development, use the stripe-cli to build a local tunnel:
+
+```bash
+stripe listen --load-from-webhooks-api --forward-to localhost:3000
 ```
 
 Configure Stripe to retry failed payments for X days (https://dashboard.stripe.com/settings/billing/automatic Smart Retries section), and then cancel the subscription. 
@@ -93,6 +104,10 @@ Below the meaning of every environment variable you can setup.
 
 `PAYMENT_FAILED_RETRY_DAYS=7` how many days a user can work after the first failed payment (and before Stripe cancel the subscription)
 
+`SIGNUP_WITH_ACTIVATE=true` set this value as true if you want to log the new registered user directly, without asking for email confirmation
+
+`STARTER_PLAN_TYPE="starter"` set the plan to assign by default to a new customer 
+
 
 # Configuring stripe.js.json
 
@@ -102,18 +117,28 @@ Then for every product you want to sell, copy it's price_id (usually starts with
 
 ```
 {
-  id: 'price_xxx',
-  title: 'Starter - Piano Mensile',
-  price: 199,
-  currency: 'EUR',
-  features: ['Piano editoriale', '1 post Facebook', '1 post Instagram', '1 Facebook story', '1 Instagram story', '1 articolo per il blog', '-', '-', '-'],
-  monthly: true
+  "id": "price_XYZ",
+  "title": "Starter",
+  "price": 4.90,
+  "currency": "EUR",
+  "features": [
+    "1 project",
+    "0 tags",
+    "star entries",
+    "1 user",
+    "3 days data retention",
+    "no push notifications"
+  ],
+  "monthly": true,
+  "planType": "starter"
 }
 ```
 
 Then sets its title, its price (in cents, the same you have configured in Stripe) and the list of features you want to show in the frontend pricing table. 
 
-Finally set `"monthly":true` if your plan is billed on monthly basis, otherwise we consider it billed yearly.
+Set `"monthly":true` if your plan is billed on monthly basis, otherwise we consider it billed yearly.
+
+Set `"planType"` with your plan code to a more user friendly knowledge of the current plan.
 
 
 # Features
@@ -134,16 +159,17 @@ Finally set `"monthly":true` if your plan is billed on monthly basis, otherwise 
 * add new credit card
 * subscription cancel
 * 3D Secure ready payments
-
-### API only
-
 * account's users list (by admins only)
 * account's user create (by admins only)
 * account's user update (by admins only)
+* account's user delete (by admins only)
+
+### API only
+
 * stripe webhooks handling
 * events notifications by email:
   - new user subscribed
-  - succesful payments
+  - successful payments
   - failed payments
 * daily notifications by email:
   - expiring trials
@@ -157,4 +183,3 @@ Author: Stefano Mancini <stefano.mancini@devinterface.com>
 Company: DevInterface SRL (https://www.devinterface.com)
 
 Issues repository: https://github.com/devinterface/startersaas-issues
-
