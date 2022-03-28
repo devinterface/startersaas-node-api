@@ -14,7 +14,8 @@ class AuthService {
     if (!user) {
       return
     }
-    const authenticated = isRefresh || await bcrypt.compare(password, user.password)
+    const authenticated =
+      isRefresh || (await bcrypt.compare(password, user.password))
     if (authenticated) {
       return this.generateToken(user.email)
     }
@@ -28,13 +29,25 @@ class AuthService {
     userData.accountId = account._id
     userData.email = userData.email.trim().toLowerCase()
     userData.role = ROLES.ADMIN
+    userData.accountOwner = true
     const user = await UserService.create(userData)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('authService.signup.subject'), i18n.t('authService.signup.messageAdmin', { email: userData.email, subdomain: accountData.subdomain }))
+    EmailService.generalNotification(
+      process.env.NOTIFIED_ADMIN_EMAIL,
+      i18n.t('authService.signup.subject'),
+      i18n.t('authService.signup.messageAdmin', {
+        email: userData.email,
+        subdomain: accountData.subdomain
+      })
+    )
     return { account: account, user: user }
   }
 
   async activate (token, email) {
-    const user = await User.findOneAndUpdate({ confirmationToken: token, active: false }, { confirmationToken: null, active: true, email: email }, { new: true })
+    const user = await User.findOneAndUpdate(
+      { confirmationToken: token, active: false },
+      { confirmationToken: null, active: true, email: email },
+      { new: true }
+    )
     if (user) {
       EmailService.activated(user)
     }
@@ -49,6 +62,7 @@ class AuthService {
     userData.accountId = account._id
     userData.email = userData.email.trim().toLowerCase()
     userData.role = ROLES.ADMIN
+    userData.accountOwner = true
 
     // signup and activate at the same time
     userData.active = true
@@ -56,7 +70,14 @@ class AuthService {
     const user = await UserService.create(userData)
 
     EmailService.activated(user)
-    EmailService.generalNotification(process.env.NOTIFIED_ADMIN_EMAIL, i18n.t('authService.signup.subject'), i18n.t('authService.signup.messageAdmin', { email: userData.email, subdomain: accountData.subdomain }))
+    EmailService.generalNotification(
+      process.env.NOTIFIED_ADMIN_EMAIL,
+      i18n.t('authService.signup.subject'),
+      i18n.t('authService.signup.messageAdmin', {
+        email: userData.email,
+        subdomain: accountData.subdomain
+      })
+    )
     const token = await this.generateToken(user.email)
     return { account: account, user: user, token: token }
   }
@@ -72,7 +93,9 @@ class AuthService {
   async forgotPassword (email) {
     const user = await User.findOne({ email: email }).exec()
     if (user) {
-      user.passwordResetToken = (Math.floor(100000 + Math.random() * 900000)).toString()
+      user.passwordResetToken = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString()
       user.passwordResetExpires = new Date(Date.now() + 3600000)
       await user.save()
       EmailService.forgotPasswordLink(user)
@@ -81,7 +104,10 @@ class AuthService {
   }
 
   async resetPassword (passwordResetToken, password, email) {
-    const user = await User.findOne({ passwordResetToken: passwordResetToken, email: email }).exec()
+    const user = await User.findOne({
+      passwordResetToken: passwordResetToken,
+      email: email
+    }).exec()
     if (user) {
       const currentDate = new Date()
       const tokenExpDate = user.passwordResetExpires
@@ -108,7 +134,9 @@ class AuthService {
   async generateToken (email) {
     const user = await User.findOne({ email: email, active: true }).exec()
     const payload = { user: { email: user.email, role: user.role } }
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRE
+    })
     return token
   }
 }

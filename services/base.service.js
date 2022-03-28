@@ -1,7 +1,4 @@
-import {
-  StatusCodes,
-  getStatusCode
-} from 'http-status-codes'
+import { StatusCodes, getStatusCode } from 'http-status-codes'
 import ApplicationError from '../libs/errors/application.error.js'
 
 class BaseService {
@@ -17,7 +14,9 @@ class BaseService {
     if (aggregate) {
       const aggregation = await queryModel.aggregate(aggregate)
       const aggregationIds = aggregation.map(({ _id }) => _id)
-      searchQuery = Object.assign({}, searchQuery, { _id: { $in: aggregationIds } })
+      searchQuery = Object.assign({}, searchQuery, {
+        _id: { $in: aggregationIds }
+      })
     }
 
     queryModel = this.getModel().find(searchQuery)
@@ -67,11 +66,15 @@ class BaseService {
   }
 
   async oneBy (q) {
-    return this.getModel().findOne(q).exec()
+    return this.getModel()
+      .findOne(q)
+      .exec()
   }
 
   async all () {
-    return this.getModel().find({}).exec()
+    return this.getModel()
+      .find({})
+      .exec()
   }
 
   async paginate (limit, skip, searchOptions, options = {}) {
@@ -81,10 +84,16 @@ class BaseService {
     if (aggregate) {
       const aggregation = await queryModel.aggregate(aggregate)
       const aggregationIds = aggregation.map(({ _id }) => _id)
-      searchQuery = Object.assign({}, searchQuery, { _id: { $in: aggregationIds } })
+      searchQuery = Object.assign({}, searchQuery, {
+        _id: { $in: aggregationIds }
+      })
     }
 
-    queryModel = queryModel.find(searchQuery).limit(limit).skip(skip).lean()
+    queryModel = queryModel
+      .find(searchQuery)
+      .limit(limit)
+      .skip(skip)
+      .lean()
 
     const populate = options.populate
     if (populate) {
@@ -99,7 +108,9 @@ class BaseService {
 
     return Promise.all([
       queryModel.exec(),
-      this.getModel().find(searchOptions).count({})
+      this.getModel()
+        .find(searchOptions)
+        .count({})
     ])
   }
 
@@ -121,7 +132,10 @@ class BaseService {
   }
 
   async deleteLogically (id, deletedBy) {
-    const result = await this.getModel().update({ _id: id }, { $set: { active: false, deletedBy: deletedBy } })
+    const result = await this.getModel().update(
+      { _id: id },
+      { $set: { active: false, deletedBy: deletedBy } }
+    )
     return result
   }
 

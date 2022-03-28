@@ -1,0 +1,61 @@
+version: "3"
+services:
+  startersaas-node-api:
+    container_name: startersaas-node-api
+    build: 
+      context: .
+      dockerfile: docker/dev/Dockerfile
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    ports:
+      - "${APP_PORT}:3000"
+    env_file:
+      - .env
+    networks:
+      - startersaas-network
+    depends_on:
+      - startersaas-redis
+      - startersaas-mongo
+
+  startersaas-redis:
+    image: "redis:alpine"
+    ports:
+      - "${REDIS_PORT}:6379"
+    env_file:
+      - .env
+    volumes:
+      - redis:/data
+    networks:
+      - startersaas-network
+
+  startersaas-mongo:  
+    image: mongo:4.4
+    volumes:
+      - mongo:/data/db
+    ports:
+      - "${MONGO_PORT}:27017"
+    env_file:
+      - .env
+    networks:
+      - startersaas-network
+    
+  startersaas-mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: 'none'  # disable saving logs
+    env_file:
+      - .env
+    ports:
+      - "${MAILHOG_UI_PORT}:8025" # web ui
+    networks:
+      - startersaas-network
+
+volumes:
+  redis:
+  mongo:
+  node_modules:
+
+networks:
+  startersaas-network:
+    external: true
