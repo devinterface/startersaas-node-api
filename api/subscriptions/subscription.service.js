@@ -16,6 +16,10 @@ class SubscriptionService {
       const sCustomer = await stripe.customers.create({
         email: user.email,
         name: account.companyName,
+        address: {
+          line1: account.companyBillingAddress,
+          country: account.companyCountry
+        },
         metadata: {
           companyName: account.companyName,
           address: account.companyBillingAddress,
@@ -46,7 +50,9 @@ class SubscriptionService {
     }
 
     try {
-      sCustomer = await stripe.customers.retrieve(account.stripeCustomerId)
+      sCustomer = await stripe.customers.retrieve(account.stripeCustomerId, {
+        expand: ['subscriptions']
+      })
 
       const haveSubscription =
         sCustomer.subscriptions.data.filter(sub => sub.status === 'active')
@@ -61,6 +67,9 @@ class SubscriptionService {
             proration_behavior: 'always_invoice',
             expand: ['latest_invoice.payment_intent'],
             payment_behavior: 'default_incomplete',
+            automatic_tax: {
+              enabled: true
+            },
             items: [
               {
                 id: sCustomer.subscriptions.data[0].items.data[0].id,
@@ -81,6 +90,9 @@ class SubscriptionService {
           customer: sCustomer.id,
           items: [{ plan: planId }],
           expand: ['latest_invoice.payment_intent'],
+          automatic_tax: {
+            enabled: true
+          },
           payment_behavior: 'default_incomplete'
         })
 
@@ -99,7 +111,10 @@ class SubscriptionService {
         return new ApplicationError('User is not a stripe USER', {}, 500)
       }
       const sCustomer = await stripe.customers.retrieve(
-        account.stripeCustomerId
+        account.stripeCustomerId,
+        {
+          expand: ['subscriptions']
+        }
       )
       return sCustomer
     } catch (error) {
@@ -162,7 +177,10 @@ class SubscriptionService {
       }
       await stripe.paymentMethods.detach(cardId)
       const sCustomer = await stripe.customers.retrieve(
-        account.stripeCustomerId
+        account.stripeCustomerId,
+        {
+          expand: ['subscriptions']
+        }
       )
       return sCustomer
     } catch (error) {
@@ -182,7 +200,10 @@ class SubscriptionService {
         }
       })
       const sCustomer = await stripe.customers.retrieve(
-        account.stripeCustomerId
+        account.stripeCustomerId,
+        {
+          expand: ['subscriptions']
+        }
       )
       return sCustomer
     } catch (error) {
@@ -200,7 +221,10 @@ class SubscriptionService {
         cancel_at_period_end: true
       })
       const sCustomer = await stripe.customers.retrieve(
-        account.stripeCustomerId
+        account.stripeCustomerId,
+        {
+          expand: ['subscriptions']
+        }
       )
       return sCustomer
     } catch (error) {

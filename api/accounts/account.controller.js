@@ -10,7 +10,16 @@ class Controller {
   }
 
   async update (req, res) {
-    const accountData = _.pick(req.body, ['companyName', 'companyVat', 'companyBillingAddress', 'companySdi', 'companyPhone', 'companyEmail', 'companyPec'])
+    const accountData = _.pick(req.body, [
+      'companyName',
+      'companyVat',
+      'companyBillingAddress',
+      'companySdi',
+      'companyPhone',
+      'companyEmail',
+      'companyPec',
+      'companyCountry'
+    ])
     const accountErrors = await AccountValidator.onUpdate(accountData)
     if (accountErrors) {
       return res.status(422).json({

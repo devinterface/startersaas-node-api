@@ -17,6 +17,7 @@ const schema = new localDatabase.Schema(
     companyPec: String,
     companyPhone: String,
     companyEmail: String,
+    companyCountry: String,
     privacyAccepted: {
       type: Boolean,
       default: false
