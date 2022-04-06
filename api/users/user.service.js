@@ -37,6 +37,11 @@ class UsersService extends BaseService {
     //   data.confirmationToken = (Math.floor(100000 + Math.random() * 900000)).toString()
     //   sendConfirm = true
     // }
+    if (data.password && data.password !== '') {
+      const salt = bcrypt.genSaltSync(10)
+      const hash = bcrypt.hashSync(data.password, salt)
+      data.password = hash
+    }
     data.active = true
     data.sso = uuidv4()
     const user = new User(data)
