@@ -12,7 +12,10 @@ class Controller {
       })
     }
     try {
-      const subscription = await SubscriptionService.subscribe(req.user.id, req.body.planId)
+      const subscription = await SubscriptionService.subscribe(
+        req.user.id,
+        req.body.planId
+      )
       return res.status(200).json(subscription)
     } catch (error) {
       return res.status(error.status).json(error)
@@ -21,7 +24,9 @@ class Controller {
 
   async getCustomer (req, res, next) {
     try {
-      const sCustomer = await SubscriptionService.getCustomer(req.user.accountId)
+      const sCustomer = await SubscriptionService.getCustomer(
+        req.user.accountId
+      )
       return res.status(200).json(sCustomer)
     } catch (error) {
       return res.status(error.status).json(error)
@@ -30,7 +35,9 @@ class Controller {
 
   async getCustomerInvoices (req, res, next) {
     try {
-      const invoices = await SubscriptionService.getCustomerInvoices(req.user.accountId)
+      const invoices = await SubscriptionService.getCustomerInvoices(
+        req.user.accountId
+      )
       return res.status(200).json(invoices)
     } catch (error) {
       return res.status(error.status).json(error)
@@ -39,7 +46,9 @@ class Controller {
 
   async getCustomerCards (req, res, next) {
     try {
-      const invoices = await SubscriptionService.getCustomerCards(req.user.accountId)
+      const invoices = await SubscriptionService.getCustomerCards(
+        req.user.accountId
+      )
       return res.status(200).json(invoices)
     } catch (error) {
       return res.status(error.status).json(error)
@@ -48,7 +57,9 @@ class Controller {
 
   async createSetupIntent (req, res, next) {
     try {
-      const setupIntent = await SubscriptionService.createSetupIntent(req.user.accountId)
+      const setupIntent = await SubscriptionService.createSetupIntent(
+        req.user.accountId
+      )
       return res.status(200).json(setupIntent)
     } catch (error) {
       return res.status(error.status).json(error)
@@ -57,7 +68,10 @@ class Controller {
 
   async removeCreditCard (req, res, next) {
     try {
-      const sCustomer = await SubscriptionService.removeCreditCard(req.user.accountId, req.body.cardId)
+      const sCustomer = await SubscriptionService.removeCreditCard(
+        req.user.accountId,
+        req.body.cardId
+      )
       return res.status(200).json(sCustomer)
     } catch (error) {
       return res.status(error.status).json(error)
@@ -66,7 +80,10 @@ class Controller {
 
   async setDefaultCreditCard (req, res, next) {
     try {
-      const sCustomer = await SubscriptionService.setDefaultCreditCard(req.user.accountId, req.body.cardId)
+      const sCustomer = await SubscriptionService.setDefaultCreditCard(
+        req.user.accountId,
+        req.body.cardId
+      )
       return res.status(200).json(sCustomer)
     } catch (error) {
       return res.status(error.status).json(error)
@@ -75,7 +92,10 @@ class Controller {
 
   async cancelSubscription (req, res, next) {
     try {
-      const sCustomer = await SubscriptionService.cancelSubscription(req.user.accountId, req.body.subscriptionId)
+      const sCustomer = await SubscriptionService.cancelSubscription(
+        req.user.accountId,
+        req.body.subscriptionId
+      )
       return res.status(200).json(sCustomer)
     } catch (error) {
       return res.status(error.status).json(error)
@@ -85,6 +105,29 @@ class Controller {
   async getPlans (req, res, next) {
     try {
       return res.status(200).json(stripeConf)
+    } catch (error) {
+      return res.status(error.status).json(error)
+    }
+  }
+
+  async createCustomerCheckoutSession (req, res, next) {
+    try {
+      const redirectUrl = await SubscriptionService.createCustomerCheckoutSession(
+        req.user.id,
+        req.body.planId
+      )
+      return res.status(200).json({ redirect_url: redirectUrl })
+    } catch (error) {
+      return res.status(error.status).json(error)
+    }
+  }
+
+  async createCustomerPortalSession (req, res, next) {
+    try {
+      const redirectUrl = await SubscriptionService.createCustomerPortalSession(
+        req.user.accountId
+      )
+      return res.status(200).json({ redirect_url: redirectUrl })
     } catch (error) {
       return res.status(error.status).json(error)
     }

@@ -294,6 +294,44 @@ class SubscriptionService {
       )
     }
   }
+
+  async createCustomerCheckoutSession (userId, planId) {
+    try {
+      const user = await UserService.byId(userId)
+      let account = await AccountService.findById(user.accountId)
+
+      if (!account.stripeCustomerId) {
+        account = await this.createCustomer(userId)
+      }
+
+      const session = await stripe.checkout.sessions.create({
+        success_url: process.env.FRONTEND_CUSTOMER_PORTAL_REDIRECT_URL,
+        cancel_url: process.env.FRONTEND_CUSTOMER_PORTAL_REDIRECT_URL,
+        line_items: [{ price: planId, quantity: 1 }],
+        mode: 'subscription',
+        customer: account.stripeCustomerId,
+        automatic_tax: { enabled: true }
+      })
+
+      return session.url
+    } catch (error) {
+      return new ApplicationError(error.message, {}, 500)
+    }
+  }
+
+  async createCustomerPortalSession (accountId) {
+    try {
+      const account = await AccountService.findById(accountId)
+
+      const session = await stripe.billingPortal.sessions.create({
+        customer: account.stripeCustomerId,
+        return_url: process.env.FRONTEND_CUSTOMER_PORTAL_REDIRECT_URL
+      })
+      return session.url
+    } catch (error) {
+      return new ApplicationError(error.message, {}, 500)
+    }
+  }
 }
 
 export default new SubscriptionService()
