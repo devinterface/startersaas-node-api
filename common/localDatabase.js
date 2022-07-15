@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
 const options = {
   autoIndex: false, // Don't build indexes
@@ -7,9 +7,9 @@ const options = {
   // If not connected, return errors immediately rather than waiting for reconnect
   bufferMaxEntries: 0,
   useUnifiedTopology: true,
-  useFindAndModify: false
-}
-mongoose.set('debug', process.env.DEBUG)
-mongoose.connect(process.env.LOCAL_MONGO_CONNECTION, options)
+  useFindAndModify: false,
+};
+mongoose.set("debug", process.env.DEBUG);
+mongoose.connect(process.env.LOCAL_MONGO_CONNECTION, options);
 
-export default mongoose
+export default mongoose;

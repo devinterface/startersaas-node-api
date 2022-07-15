@@ -1,5 +1,5 @@
-import mongoose from 'mongoose'
-import localDatabase from '../../common/localDatabase.js'
+import mongoose from "mongoose";
+import localDatabase from "../../common/localDatabase.js";
 
 const schema = new localDatabase.Schema(
   {
@@ -11,7 +11,7 @@ const schema = new localDatabase.Schema(
     role: String,
     active: {
       type: Boolean,
-      default: false
+      default: false,
     },
     confirmationToken: String,
     passwordResetToken: String,
@@ -19,24 +19,24 @@ const schema = new localDatabase.Schema(
     sso: String,
     accountOwner: {
       type: Boolean,
-      default: false
+      default: false,
     },
     accountId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Account'
+      ref: "Account",
     },
     account: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Account'
-    }
+      ref: "Account",
+    },
   },
   { timestamps: true, toJSON: { virtuals: true } }
-)
+);
 
-schema.virtual('id').get(function () {
-  return this._id
-})
+schema.virtual("id").get(function () {
+  return this._id;
+});
 
-const User = localDatabase.model('User', schema, 'user')
+const User = localDatabase.model("User", schema, "user");
 
-export default User
+export default User;

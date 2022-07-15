@@ -1,157 +1,147 @@
-import { StatusCodes, getStatusCode } from 'http-status-codes'
-import ApplicationError from '../libs/errors/application.error.js'
+import { getStatusCode, StatusCodes } from "http-status-codes";
+import ApplicationError from "../libs/errors/application.error.js";
 
 class BaseService {
-  getModel () {
-    throw Error('Should be overridden')
+  getModel() {
+    throw Error("Should be overridden");
   }
 
-  async find (params = {}, options = {}) {
-    let queryModel = this.getModel()
-    let searchQuery = Object.assign({}, params)
+  async find(params = {}, options = {}) {
+    let queryModel = this.getModel();
+    let searchQuery = Object.assign({}, params);
 
-    const aggregate = options.aggregate
+    const aggregate = options.aggregate;
     if (aggregate) {
-      const aggregation = await queryModel.aggregate(aggregate)
-      const aggregationIds = aggregation.map(({ _id }) => _id)
+      const aggregation = await queryModel.aggregate(aggregate);
+      const aggregationIds = aggregation.map(({ _id }) => _id);
       searchQuery = Object.assign({}, searchQuery, {
-        _id: { $in: aggregationIds }
-      })
+        _id: { $in: aggregationIds },
+      });
     }
 
-    queryModel = this.getModel().find(searchQuery)
+    queryModel = this.getModel().find(searchQuery);
 
-    const populate = options.populate
+    const populate = options.populate;
     if (populate) {
       if (Array.isArray(populate)) {
-        populate.forEach(population => {
-          queryModel.populate(population)
-        })
+        populate.forEach((population) => {
+          queryModel.populate(population);
+        });
       } else {
-        queryModel.populate(populate)
+        queryModel.populate(populate);
       }
     }
 
-    return queryModel.exec()
+    return queryModel.exec();
   }
 
-  async findById (id, options = {}) {
-    const record = await this.byId(id, options)
+  async findById(id, options = {}) {
+    const record = await this.byId(id, options);
     if (!record) {
       throw new ApplicationError(
         getStatusCode(StatusCodes.NOT_FOUND),
-        'Record not found',
+        "Record not found",
         StatusCodes.NOT_FOUND
-      )
+      );
     }
 
-    return record
+    return record;
   }
 
-  async byId (id, options = {}) {
-    let model = this.getModel().findById(id)
+  async byId(id, options = {}) {
+    let model = this.getModel().findById(id);
 
-    const populate = options.populate
+    const populate = options.populate;
     if (populate) {
       if (Array.isArray(populate)) {
-        populate.forEach(population => {
-          model = model.populate(population)
-        })
+        populate.forEach((population) => {
+          model = model.populate(population);
+        });
       } else {
-        model.populate(populate)
+        model.populate(populate);
       }
     }
 
-    return model.exec()
+    return model.exec();
   }
 
-  async oneBy (q) {
-    return this.getModel()
-      .findOne(q)
-      .exec()
+  async oneBy(q) {
+    return this.getModel().findOne(q).exec();
   }
 
-  async all () {
-    return this.getModel()
-      .find({})
-      .exec()
+  async all() {
+    return this.getModel().find({}).exec();
   }
 
-  async paginate (limit, skip, searchOptions, options = {}) {
-    let queryModel = this.getModel()
-    let searchQuery = Object.assign({}, searchOptions)
-    const aggregate = options.aggregate
+  async paginate(limit, skip, searchOptions, options = {}) {
+    let queryModel = this.getModel();
+    let searchQuery = Object.assign({}, searchOptions);
+    const aggregate = options.aggregate;
     if (aggregate) {
-      const aggregation = await queryModel.aggregate(aggregate)
-      const aggregationIds = aggregation.map(({ _id }) => _id)
+      const aggregation = await queryModel.aggregate(aggregate);
+      const aggregationIds = aggregation.map(({ _id }) => _id);
       searchQuery = Object.assign({}, searchQuery, {
-        _id: { $in: aggregationIds }
-      })
+        _id: { $in: aggregationIds },
+      });
     }
 
-    queryModel = queryModel
-      .find(searchQuery)
-      .limit(limit)
-      .skip(skip)
-      .lean()
+    queryModel = queryModel.find(searchQuery).limit(limit).skip(skip).lean();
 
-    const populate = options.populate
+    const populate = options.populate;
     if (populate) {
       if (Array.isArray(populate)) {
-        populate.forEach(population => {
-          queryModel.populate(population)
-        })
+        populate.forEach((population) => {
+          queryModel.populate(population);
+        });
       } else {
-        queryModel.populate(populate)
+        queryModel.populate(populate);
       }
     }
 
     return Promise.all([
       queryModel.exec(),
-      this.getModel()
-        .find(searchOptions)
-        .count({})
-    ])
+      this.getModel().find(searchOptions).count({}),
+    ]);
   }
 
-  async create (data) {
+  async create(data) {
     try {
-      const record = new (this.getModel())(data)
-      return record.save()
+      const record = new (this.getModel())(data);
+      return record.save();
     } catch (error) {
       throw new ApplicationError(
         getStatusCode(StatusCodes.INTERNAL_SERVER_ERROR),
         error.message,
         StatusCodes.INTERNAL_SERVER_ERROR
-      )
+      );
     }
   }
 
-  async update (id, data) {
-    return this.getModel().findOneAndUpdate({ _id: id }, data, { new: true })
+  async update(id, data) {
+    return this.getModel().findOneAndUpdate({ _id: id }, data, { new: true });
   }
 
-  async deleteLogically (id, deletedBy) {
+  async deleteLogically(id, deletedBy) {
     const result = await this.getModel().update(
       { _id: id },
       { $set: { active: false, deletedBy: deletedBy } }
-    )
-    return result
+    );
+    return result;
   }
 
-  async delete (id) {
-    return this.getModel().findOneAndDelete({ _id: id })
+  async delete(id) {
+    return this.getModel().findOneAndDelete({ _id: id });
   }
 
-  async deleteMany (filter) {
-    return this.getModel().deleteMany(filter)
+  async deleteMany(filter) {
+    return this.getModel().deleteMany(filter);
   }
 
-  async remove (id) {
-    const result = await this.getModel().findById({ _id: id })
-    result.remove()
-    return result
+  async remove(id) {
+    const result = await this.getModel().findById({ _id: id });
+    result.remove();
+    return result;
   }
 }
 
-export default BaseService
+export default BaseService;
