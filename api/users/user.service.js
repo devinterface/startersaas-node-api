@@ -41,6 +41,8 @@ class UsersService extends BaseService {
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(data.password, salt);
       data.password = hash;
+    } else {
+      data.password = "justaplaceholder";
     }
     data.active = true;
     data.sso = uuidv4();
