@@ -21,7 +21,7 @@ class UsersService extends BaseService {
     return this.getModel().findOneAndDelete({ _id: id, accountId: accountId });
   }
 
-  async create(data) {
+  async create(data, sendConfirm = false) {
     // const sendForgot = false
     // const sendConfirm = false
     // if (data.password && data.password !== '') {
@@ -33,10 +33,13 @@ class UsersService extends BaseService {
     //   data.passwordResetExpires = new Date(Date.now() + 3600000)
     //   sendForgot = true
     // }
-    // if (!data.active) {
-    //   data.confirmationToken = (Math.floor(100000 + Math.random() * 900000)).toString()
-    //   sendConfirm = true
-    // }
+    if (sendConfirm) {
+      data.confirmationToken = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+    } else {
+      data.active = true;
+    }
     if (data.password && data.password !== "") {
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(data.password, salt);
@@ -44,16 +47,15 @@ class UsersService extends BaseService {
     } else {
       data.password = "justaplaceholder";
     }
-    data.active = true;
     data.sso = uuidv4();
     const user = new User(data);
     await user.save();
     // if (sendForgot) {
     //   EmailService.forgotPasswordLink(data)
     // }
-    // if (sendConfirm) {
-    //   EmailService.sendActivationEmail(data)
-    // }
+    if (sendConfirm) {
+      EmailService.sendActivationEmail(data);
+    }
     EmailService.activated(data);
     return user;
   }

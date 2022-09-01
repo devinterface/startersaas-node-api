@@ -33,7 +33,7 @@ class AuthService {
     userData.email = userData.email.trim().toLowerCase();
     userData.role = ROLES.ADMIN;
     userData.accountOwner = true;
-    const user = await UserService.create(userData);
+    const user = await UserService.create(userData, true);
     EmailService.generalNotification(
       process.env.NOTIFIED_ADMIN_EMAIL,
       i18n.t("authService.signup.subject"),

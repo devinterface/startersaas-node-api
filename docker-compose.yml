@@ -2,7 +2,7 @@ version: "3"
 services:
   startersaas-node-api:
     container_name: startersaas-node-api
-    build: 
+    build:
       context: .
       dockerfile: docker/dev/Dockerfile
     volumes:
@@ -29,7 +29,7 @@ services:
     networks:
       - startersaas-network
 
-  startersaas-mongo:  
+  startersaas-mongo:
     image: mongo:4.4
     volumes:
       - mongo:/data/db
@@ -39,11 +39,11 @@ services:
       - .env
     networks:
       - startersaas-network
-    
+
   startersaas-mailhog:
     image: mailhog/mailhog
     logging:
-      driver: 'none'  # disable saving logs
+      driver: "none" # disable saving logs
     env_file:
       - .env
     ports:

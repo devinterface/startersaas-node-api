@@ -34,7 +34,13 @@ class Controller {
         errors: userErrors.details,
       });
     }
-    if (process.env.SIGNUP_WITH_ACTIVATE) {
+    console.log(
+      "SIGNUP_WITH_ACTIVATE ->",
+      process.env.SIGNUP_WITH_ACTIVATE,
+      process.env.SIGNUP_WITH_ACTIVATE === "true",
+      process.env.SIGNUP_WITH_ACTIVATE === "false"
+    );
+    if (process.env.SIGNUP_WITH_ACTIVATE === "true") {
       const signupResponse = await AuthService.signupWithActivate(
         accountData,
         userData
