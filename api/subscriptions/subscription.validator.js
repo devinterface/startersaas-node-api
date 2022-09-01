@@ -1,14 +1,14 @@
-import Joi from '@hapi/joi'
+import Joi from "@hapi/joi";
 
 class SubscriptionValidator {
-  async onCreate (obj) {
+  async onCreate(obj) {
     const schemaKeys = {
-      planId: Joi.string().required()
-    }
-    const schema = Joi.object().keys(schemaKeys)
-    const { error } = schema.validate(obj, { abortEarly: false })
-    return error
+      planId: Joi.string().required(),
+    };
+    const schema = Joi.object().keys(schemaKeys);
+    const { error } = schema.validate(obj, { abortEarly: false });
+    return error;
   }
 }
 
-export default new SubscriptionValidator()
+export default new SubscriptionValidator();

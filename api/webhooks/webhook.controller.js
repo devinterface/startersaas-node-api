@@ -1,10 +1,10 @@
-import WebhookService from './webhook.service.js'
+import WebhookService from "./webhook.service.js";
 
 class Controller {
-  async handleWebhook (req, res, next) {
-    WebhookService.handleWebhook(req.body)
-    return res.json({})
+  async handleWebhook(req, res, next) {
+    WebhookService.handleWebhook(req.body);
+    return res.json({});
   }
 }
 
-export default new Controller()
+export default new Controller();

@@ -1,10 +1,10 @@
-import localDatabase from '../../common/localDatabase.js'
 import moment from 'moment'
+import localDatabase from '../../common/localDatabase.js'
 
-const subscriptionTrial = 'trial'
-const subscriptionPaymentFailed = 'payment_failed'
-const subscriptionDeactivated = 'deactivated'
-const subscriptionActive = 'active'
+const subscriptionTrial = "trial";
+const subscriptionPaymentFailed = "payment_failed";
+const subscriptionDeactivated = "deactivated";
+const subscriptionActive = "active";
 
 const schema = new localDatabase.Schema(
   {
@@ -17,62 +17,63 @@ const schema = new localDatabase.Schema(
     companyPec: String,
     companyPhone: String,
     companyEmail: String,
+    companyCountry: String,
     privacyAccepted: {
       type: Boolean,
-      default: false
+      default: false,
     },
     marketingAccepted: {
       type: Boolean,
-      default: false
+      default: false,
     },
     stripeCustomerId: String,
     paymentFailed: {
       type: Boolean,
-      default: false
+      default: false,
     },
     paymentFailedFirstAt: Date,
     paymentFailedSubscriptionEndsAt: Date,
     manualPayment: {
       type: Boolean,
-      default: false
+      default: false,
     },
     trialPeriodEndsAt: Date,
     stripePlanId: String,
     subscriptionExpiresAt: Date,
-    planType: String
+    planType: String,
   },
   { timestamps: true, toJSON: { virtuals: true } }
-)
+);
 
-schema.virtual('subscriptionStatus').get(function () {
+schema.virtual("subscriptionStatus").get(function () {
   if (moment(this.trialPeriodEndsAt).isAfter(Date.now())) {
-    return subscriptionTrial
+    return subscriptionTrial;
   } else if (
     this.trialPeriodEndsAt &&
     moment(this.trialPeriodEndsAt).isBefore(Date.now())
   ) {
-    return subscriptionDeactivated
+    return subscriptionDeactivated;
   } else if (
     this.paymentFailed &&
     moment(this.paymentFailedSubscriptionEndsAt).isAfter(Date.now())
   ) {
-    return subscriptionPaymentFailed
+    return subscriptionPaymentFailed;
   } else if (
     this.paymentFailed &&
     moment(this.paymentFailedSubscriptionEndsAt).isBefore(Date.now())
   ) {
-    return subscriptionDeactivated
+    return subscriptionDeactivated;
   } else if (moment(this.subscriptionExpiresAt).isBefore(Date.now())) {
-    return subscriptionDeactivated
+    return subscriptionDeactivated;
   } else {
-    return subscriptionActive
+    return subscriptionActive;
   }
-})
+});
 
-schema.virtual('id').get(function () {
-  return this._id
-})
+schema.virtual("id").get(function () {
+  return this._id;
+});
 
-const Account = localDatabase.model('Account', schema, 'account')
+const Account = localDatabase.model("Account", schema, "account");
 
-export default Account
+export default Account;
