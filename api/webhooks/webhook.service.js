@@ -21,7 +21,7 @@ class WebhookService extends BaseService {
       case "customer.subscription.created":
         this.newSubscription(data);
         break;
-      case "invoice.payment_succeeded":
+      case "invoice.paid":
         this.paymentSuccessful(data);
         break;
       case "invoice.payment_failed":
@@ -44,6 +44,14 @@ class WebhookService extends BaseService {
       accountId: account.id,
       accountOwner: true,
     });
+
+    if (data.data.object.billing_reason === "subscription_create") {
+    }
+    if (data.data.object.billing_reason === "subscription_update") {
+    }
+    if (data.data.object.billing_reason === "subscription_cycle") {
+    }
+
     EmailService.generalNotification(
       user.email,
       i18n.t("webhookService.paymentSuccessful.subject"),
@@ -147,9 +155,8 @@ class WebhookService extends BaseService {
   async paymentFailed(data) {
     const stripeCustomerId = data.data.object.customer;
     if (
-      data.data.object.payment_intent !== "" &&
-      data.data.object.payment_intent !== undefined &&
-      data.data.object.billing_reason !== "subscription_update"
+      data.data.object.billing_reason === "subscription_create" ||
+      data.data.object.billing_reason === "subscription_update"
     ) {
       return;
     }
