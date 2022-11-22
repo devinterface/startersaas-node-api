@@ -19,7 +19,7 @@ class WebhookService extends BaseService {
         this.subscriptionUpdated(data);
         break;
       case "customer.subscription.created":
-        this.newSubscription(data);
+        this.subscriptionUpdated(data);
         break;
       case "invoice.paid":
         this.paymentSuccessful(data);
@@ -46,26 +46,54 @@ class WebhookService extends BaseService {
     });
 
     if (data.data.object.billing_reason === "subscription_create") {
+      EmailService.generalNotification(
+        user.email,
+        i18n.t("webhookService.newSubscription.subject"),
+        i18n.t("webhookService.newSubscription.message"),
+        user.language
+      );
+      EmailService.generalNotification(
+        process.env.NOTIFIED_ADMIN_EMAIL,
+        i18n.t("webhookService.newSubscription.subject"),
+        i18n.t("webhookService.newSubscription.messageAdmin", {
+          email: user.email,
+          subdomain: account.subdomain,
+        })
+      );
     }
     if (data.data.object.billing_reason === "subscription_update") {
+      EmailService.generalNotification(
+        user.email,
+        i18n.t("webhookService.subscriptionUpdated.subject"),
+        i18n.t("webhookService.subscriptionUpdated.message"),
+        user.language
+      );
+      EmailService.generalNotification(
+        process.env.NOTIFIED_ADMIN_EMAIL,
+        i18n.t("webhookService.subscriptionUpdated.subject"),
+        i18n.t("webhookService.subscriptionUpdated.messageAdmin", {
+          email: user.email,
+          subdomain: account.subdomain,
+        })
+      );
     }
     if (data.data.object.billing_reason === "subscription_cycle") {
+      EmailService.generalNotification(
+        user.email,
+        i18n.t("webhookService.paymentSuccessful.subject"),
+        i18n.t("webhookService.paymentSuccessful.message"),
+        user.language
+      );
+      EmailService.generalNotification(
+        process.env.NOTIFIED_ADMIN_EMAIL,
+        i18n.t("webhookService.paymentSuccessful.subject"),
+        i18n.t("webhookService.paymentSuccessful.messageAdmin", {
+          email: user.email,
+          subdomain: account.subdomain,
+        })
+      );
     }
 
-    EmailService.generalNotification(
-      user.email,
-      i18n.t("webhookService.paymentSuccessful.subject"),
-      i18n.t("webhookService.paymentSuccessful.message"),
-      user.language
-    );
-    EmailService.generalNotification(
-      process.env.NOTIFIED_ADMIN_EMAIL,
-      i18n.t("webhookService.paymentSuccessful.subject"),
-      i18n.t("webhookService.paymentSuccessful.messageAdmin", {
-        email: user.email,
-        subdomain: account.subdomain,
-      })
-    );
     AccountService.update(account.id, {
       paymentFailed: false,
       active: true,
@@ -74,44 +102,6 @@ class WebhookService extends BaseService {
       trialPeriodEndsAt: null,
     });
     AccountService.generateInvoce(data, account, user);
-  }
-
-  async newSubscription(data) {
-    const stripeCustomerId = data.data.object.customer;
-    if (data.data.object.status !== "active") {
-      return;
-    }
-    const account = await AccountService.oneBy({
-      stripeCustomerId: stripeCustomerId,
-    });
-    if (!account) {
-      return;
-    }
-    const user = await UserService.oneBy({
-      accountId: account.id,
-      accountOwner: true,
-    });
-    const expiresAt = data.data.object.cancel_at;
-    account.subscriptionExpiresAt = expiresAt ? moment.unix(expiresAt) : null;
-    account.stripePlanId = data.data.object.plan.id;
-    account.planType = stripeConf.plans.find(
-      (p) => p.id === data.data.object.plan.id
-    ).planType;
-    account.save();
-    EmailService.generalNotification(
-      user.email,
-      i18n.t("webhookService.newSubscription.subject"),
-      i18n.t("webhookService.newSubscription.message"),
-      user.language
-    );
-    EmailService.generalNotification(
-      process.env.NOTIFIED_ADMIN_EMAIL,
-      i18n.t("webhookService.newSubscription.subject"),
-      i18n.t("webhookService.newSubscription.messageAdmin", {
-        email: user.email,
-        subdomain: account.subdomain,
-      })
-    );
   }
 
   async subscriptionUpdated(data) {
@@ -136,20 +126,6 @@ class WebhookService extends BaseService {
       (p) => p.id === data.data.object.plan.id
     ).planType;
     account.save();
-    EmailService.generalNotification(
-      user.email,
-      i18n.t("webhookService.subscriptionUpdated.subject"),
-      i18n.t("webhookService.subscriptionUpdated.message"),
-      user.language
-    );
-    EmailService.generalNotification(
-      process.env.NOTIFIED_ADMIN_EMAIL,
-      i18n.t("webhookService.subscriptionUpdated.subject"),
-      i18n.t("webhookService.subscriptionUpdated.messageAdmin", {
-        email: user.email,
-        subdomain: account.subdomain,
-      })
-    );
   }
 
   async paymentFailed(data) {

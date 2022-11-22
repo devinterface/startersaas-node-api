@@ -1,7 +1,9 @@
 # Starter SaaS Node API
 
 This project contains everything you need to setup a fully featured SaaS API in 5 minutes.
+
 # Installation
+
 Copy `.env.example` into `.env` and `stripe.conf.js.example` into `stripe.conf.js`.
 
 Create a startersaas newtwork typing:
@@ -28,7 +30,7 @@ And finally, run the application
 docker compose up
 ```
 
-Application will be reachable on 
+Application will be reachable on
 
 ```bash
 http://localhost:3000
@@ -45,7 +47,7 @@ https://<my_startersaas_api_domain>/api/v1/stripe/webhook
 and events below:
 
 ```
-invoice.payment_succeeded
+invoice.paid
 invoice.payment_failed
 customer.subscription.created
 customer.subscription.updated
@@ -57,14 +59,13 @@ For local development, use the stripe-cli to build a local tunnel:
 stripe listen --load-from-webhooks-api --forward-to localhost:3000
 ```
 
-Configure Stripe to retry failed payments for X days (https://dashboard.stripe.com/settings/billing/automatic Smart Retries section), and then cancel the subscription. 
+Configure Stripe to retry failed payments for X days (https://dashboard.stripe.com/settings/billing/automatic Smart Retries section), and then cancel the subscription.
 
 Remember this value, it will be used in the `.env` file in `PAYMENT_FAILED_RETRY_DAYS` variable.
 
 # Configuring .env
 
 Below the meaning of every environment variable you can setup.
-
 
 `PORT=":3000"` the API server port number
 
@@ -83,7 +84,7 @@ Below the meaning of every environment variable you can setup.
 `LOCAL_MONGO_CONNECTION='mongodb://localhost/startersaas-db'` the MongoDB connection string
 
 `REDIS_HOST=""` Redis server host
-`REDIS_PORT=""`  Redis server port
+`REDIS_PORT=""` Redis server port
 
 `DEFAULT_EMAIL_FROM="noreply@startersaas.com"` send every notification email from this address
 
@@ -106,8 +107,7 @@ Below the meaning of every environment variable you can setup.
 
 `SIGNUP_WITH_ACTIVATE=true` set this value as true if you want to log the new registered user directly, without asking for email confirmation
 
-`STARTER_PLAN_TYPE="starter"` set the plan to assign by default to a new customer 
-
+`STARTER_PLAN_TYPE="starter"` set the plan to assign by default to a new customer
 
 # Configuring stripe.js.json
 
@@ -134,51 +134,50 @@ Then for every product you want to sell, copy it's price_id (usually starts with
 }
 ```
 
-Then sets its title, its price (in cents, the same you have configured in Stripe) and the list of features you want to show in the frontend pricing table. 
+Then sets its title, its price (in cents, the same you have configured in Stripe) and the list of features you want to show in the frontend pricing table.
 
 Set `"monthly":true` if your plan is billed on monthly basis, otherwise we consider it billed yearly.
 
 Set `"planType"` with your plan code to a more user friendly knowledge of the current plan.
 
-
 # Features
 
 ### API and Frontend
 
-* user registration of account with subdomain, email and password
-* user email activation with 6 characters code and account creation
-* resend activation code if not received
-* user password reset through code sent by email
-* user login
-* user logout
-* user change password once logged in
-* account trial period
-* edit of account billing informations
-* subscription creation
-* plan change
-* add new credit card
-* subscription cancel
-* 3D Secure ready payments
-* account's users list (by admins only)
-* account's user create (by admins only)
-* account's user update (by admins only)
-* account's user delete (by admins only)
+- user registration of account with subdomain, email and password
+- user email activation with 6 characters code and account creation
+- resend activation code if not received
+- user password reset through code sent by email
+- user login
+- user logout
+- user change password once logged in
+- account trial period
+- edit of account billing informations
+- subscription creation
+- plan change
+- add new credit card
+- subscription cancel
+- 3D Secure ready payments
+- account's users list (by admins only)
+- account's user create (by admins only)
+- account's user update (by admins only)
+- account's user delete (by admins only)
 
 ### API only
 
-* stripe webhooks handling
-* events notifications by email:
+- stripe webhooks handling
+- events notifications by email:
   - new user subscribed
   - successful payments
   - failed payments
-* daily notifications by email:
+- daily notifications by email:
   - expiring trials
   - failed payments
   - account suspension due to failed payments
 
 ### CREDITS
 
-Author: Stefano Mancini <stefano.mancini@devinterface.com> 
+Author: Stefano Mancini <stefano.mancini@devinterface.com>
 
 Company: DevInterface SRL (https://www.devinterface.com)
 
