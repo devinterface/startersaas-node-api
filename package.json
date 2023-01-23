@@ -2,7 +2,7 @@
   "name": "startersaas-node-api",
   "version": "3.5.0",
   "description": "Starter SAAS Node API",
-  "license": "Apache 2.0 with Commons Clause",
+  "license": "MIT",
   "author": "Stefano Mancini <stefano.mancini@devinterface.com> (https://www.devinterface.com)",
   "homepage": "https://www.startersaas.com",
   "main": "index.js",
