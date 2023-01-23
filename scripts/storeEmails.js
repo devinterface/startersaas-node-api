@@ -8,19 +8,19 @@ import l from "../common/logger.js";
   try {
     await EmailService.deleteMany({});
     for (const code of [
-      "activate",
-      "activationLink",
-      "forgotPassword",
-      "notification",
+      ["activate", "Welcome"],
+      ["activationLink", "Activation link"],
+      ["forgotPassword", "Forgot password"],
+      ["notification", "Notification"],
     ]) {
       const email = fs.readFileSync(
-        `views/mailer/${code}.email.liquid`,
+        `views/mailer/${code[0]}.email.liquid`,
         "utf8"
       );
       await EmailService.create({
         code: code,
         lang: "en",
-        subject: `[Starter SaaS] ${code}`,
+        subject: `[Starter SaaS] ${code[1]}`,
         body: email,
       });
       l.info("Email was successfully stored on database");
