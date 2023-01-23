@@ -1,22 +1,22 @@
 const en = {
   webhookService: {
     paymentSuccessful: {
-      subject: "[Starter SAAS] Payment completed",
+      subject: "[StarterSaaS] Payment completed",
       message: "Congratulations, your subscription has been renewed.",
       messageAdmin: "%{email} - %{subdomain} paid a subscription.",
     },
     newSubscription: {
-      subject: "[Starter SAAS] New subscription activated",
+      subject: "[StarterSaaS] New subscription activated",
       message: "Congratulations, your subscription has been activated.",
       messageAdmin: "%{email} - %{subdomain} activated a subscription.",
     },
     subscriptionUpdated: {
-      subject: "[Starter SAAS] Subscription updated",
+      subject: "[StarterSaaS] Subscription updated",
       message: "Congratulations, your subscription has been updated.",
       messageAdmin: "%{email} - %{subdomain} updated a subscription.",
     },
     paymentFailed: {
-      subject: "[Starter SAAS] Payment failed",
+      subject: "[StarterSaaS] Payment failed",
       message:
         'Dear user, your payment wasn\'t successful. Please go to this <a href="%{stripeHostedInvoiceUrl}" target="_blank">url</a> to pay your subscription, otherwise your subscription will be deactivated on %{date}.',
       messageAdmin:
@@ -25,20 +25,20 @@ const en = {
   },
   authService: {
     signup: {
-      subject: "[Starter SAAS] New subscriber",
+      subject: "[StarterSaaS] New subscriber",
       messageAdmin: "%{email} - %{subdomain} has been subscribed.",
     },
   },
   subscriptionService: {
     runNotifyExpiringTrials: {
       subject:
-        "[Starter SAAS] Trial version is expiring in %{daysToExpire} day/s",
+        "[StarterSaaS] Trial version is expiring in %{daysToExpire} day/s",
       message:
         "Dear user, your trial period is exipring in %{daysToExpire} day/s. Please login and subscribe to a plan.",
     },
     runNotifyPaymentFailed: {
       subject:
-        "[Starter SAAS] Subscription will be deactivated in %{daysToExpire} day/s",
+        "[StarterSaaS] Subscription will be deactivated in %{daysToExpire} day/s",
       message:
         "Dear user, due to a failed payment your subscription will be deactivated on %{date}. Please login and check your credit card.",
     },

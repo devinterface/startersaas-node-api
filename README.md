@@ -1,4 +1,4 @@
-# Starter SaaS Node API
+# StarterSaaS Node API
 
 This project contains everything you need to setup a fully featured SaaS API in 5 minutes.
 

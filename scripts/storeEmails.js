@@ -20,7 +20,7 @@ import l from "../common/logger.js";
       await EmailService.create({
         code: code,
         lang: "en",
-        subject: `[Starter SaaS] ${code[1]}`,
+        subject: `[StarterSaaS] ${code[1]}`,
         body: email,
       });
       l.info("Email was successfully stored on database");
