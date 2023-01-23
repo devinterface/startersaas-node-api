@@ -3,7 +3,7 @@ const stripeConf = {
   "plans": [
     {
       "id": "price_XYZ",
-      "title": "Starter - Piano Mensile",
+      "title": "Starter - Monthly",
       "price": 4.90,
       "currency": "EUR",
       "features": [
@@ -19,7 +19,7 @@ const stripeConf = {
     },
     {
       "id": "price_XYZ",
-      "title": "Base - Piano Mensile",
+      "title": "Base - Monthly",
       "price": 9.90,
       "currency": "EUR",
       "features": [
@@ -35,7 +35,7 @@ const stripeConf = {
     },
     {
       "id": "price_XYZ",
-      "title": "Pro - Piano Mensile",
+      "title": "Pro - Monthly",
       "price": 14.90,
       "currency": "EUR",
       "features": [
