@@ -21,7 +21,7 @@ docker compose build
 Store email templates on database by typing:
 
 ```bash
-docker compose run startersaas-node-api npm run store:emails
+docker compose run --rm startersaas-node-api npm run store:emails
 ```
 
 And finally, run the application

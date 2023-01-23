@@ -18,7 +18,7 @@ import l from "../common/logger.js";
         "utf8"
       );
       await EmailService.create({
-        code: code,
+        code: code[0],
         lang: "en",
         subject: `[StarterSaaS] ${code[1]}`,
         body: email,

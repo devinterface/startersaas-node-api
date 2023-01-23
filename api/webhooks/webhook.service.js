@@ -101,7 +101,6 @@ class WebhookService extends BaseService {
       paymentFailedSubscriptionEndsAt: null,
       trialPeriodEndsAt: null,
     });
-    AccountService.generateInvoce(data, account, user);
   }
 
   async subscriptionUpdated(data) {

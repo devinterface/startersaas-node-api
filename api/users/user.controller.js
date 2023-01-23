@@ -30,8 +30,13 @@ class Controller {
         errors: errors.details,
       });
     }
+    const me = req.user.toObject();
     const userData = _.pick(req.body, ["name", "surname", "language"]);
-    const result = await UserService.update(req.user.id, userData);
+    const result = await UserService.update(
+      req.user.id,
+      me.accountId,
+      userData
+    );
     if (result) {
       return res.json(result);
     } else {
