@@ -30,7 +30,7 @@ class EmailService extends BaseService {
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
-      subject: data.subject || "[Starter SAAS] Reset password code",
+      subject: data.subject || "[StarterSaaS] Reset password code",
       html: emailText,
     };
     const result = await transporter.sendMail(mailOptions);
@@ -47,7 +47,7 @@ class EmailService extends BaseService {
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
-      subject: "[Starter SAAS] Activation code",
+      subject: "[StarterSaaS] Activation code",
       html: emailText,
     };
     const result = await transporter.sendMail(mailOptions);
@@ -64,7 +64,7 @@ class EmailService extends BaseService {
     const mailOptions = {
       to: user.email,
       from: process.env.DEFAULT_EMAIL_FROM,
-      subject: data.subject || "[Starter SAAS] Account activated",
+      subject: data.subject || "[StarterSaaS] Account activated",
       html: emailText,
     };
     const result = await transporter.sendMail(mailOptions);
