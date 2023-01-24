@@ -1,8 +1,6 @@
-import Stripe from 'stripe'
-import Fattura24Client from '../../libs/fattura24/client.js'
-import makeInvoiceDocument from '../../libs/fattura24/document.js'
-import BaseService from '../../services/base.service.js'
-import Account from './account.model.js'
+import Stripe from "stripe";
+import BaseService from "../../services/base.service.js";
+import Account from "./account.model.js";
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 class AccountService extends BaseService {
@@ -32,13 +30,6 @@ class AccountService extends BaseService {
       account.stripeCustomerId = sCustomer.id;
       account.save();
     } catch (error) {}
-  }
-
-  async generateInvoce(payload, account, user) {
-    if (payload.data.object.amount_paid > 0) {
-      const document = makeInvoiceDocument(payload, account, user);
-      Fattura24Client.createInvoice(document);
-    }
   }
 }
 
