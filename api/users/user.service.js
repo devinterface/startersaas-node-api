@@ -1,8 +1,8 @@
-import User from "./user.model.js";
 import bcrypt from "bcrypt";
+import { v4 as uuidv4 } from "uuid";
 import BaseService from "../../services/base.service.js";
 import EmailService from "../emails/email.service.js";
-import { v4 as uuidv4 } from "uuid";
+import User from "./user.model.js";
 
 class UsersService extends BaseService {
   getModel() {
