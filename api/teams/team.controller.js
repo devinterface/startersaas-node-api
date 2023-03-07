@@ -38,6 +38,7 @@ class Controller {
       });
     }
     const teamData = _.pick(req.body, ["name", "code"]);
+    teamData.code = _.kebabCase(teamData.code);
     const team = await TeamService.create(teamData, req.user.accountId);
     if (team) {
       return res.json(team);
@@ -77,8 +78,7 @@ class Controller {
     try {
       await TeamService.delete(req.params.id, req.user.accountId);
       return res.json({
-        success: true,
-        message: "Team deleted successfully.",
+        deleted: true,
       });
     } catch (error) {
       return res.status(401).json({
@@ -109,10 +109,7 @@ class Controller {
         req.params.userId
       );
       if (team) {
-        return res.json({
-          success: true,
-          message: "User successfully added.",
-        });
+        return res.json(team);
       }
     } catch (error) {
       return res.status(401).json({
@@ -143,10 +140,7 @@ class Controller {
         req.params.userId
       );
       if (team) {
-        return res.json({
-          success: true,
-          message: "User successfully removed.",
-        });
+        return res.json(team);
       }
     } catch (error) {
       return res.status(401).json({
