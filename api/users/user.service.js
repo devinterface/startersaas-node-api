@@ -57,7 +57,7 @@ class UsersService extends BaseService {
       EmailService.sendActivationEmail(data);
     }
     EmailService.activated(data);
-    return user;
+    return user.toObject();
   }
 
   async updatePassword(userId, password) {

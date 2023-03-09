@@ -9,7 +9,7 @@ const schema = new localDatabase.Schema(
     code: String,
     users: [
       {
-        id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         email: { type: String },
       },
     ],

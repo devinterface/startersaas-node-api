@@ -21,9 +21,9 @@ class TeamsService extends BaseService {
           500
         );
       }
-      const user = new Team(data);
-      await user.save();
-      return user;
+      const newTeam = new Team(data);
+      await newTeam.save();
+      return newTeam.toObject();
     } catch (e) {
       return new ApplicationError(e.message, {}, 500);
     }
@@ -88,7 +88,7 @@ class TeamsService extends BaseService {
       teams: uniqueTeams,
     });
 
-    return updatedTeam;
+    return updatedTeam.toObject();
   }
 
   async removeUser(id, accountId, userId) {
@@ -121,7 +121,7 @@ class TeamsService extends BaseService {
       teams: filteredTeams,
     });
 
-    return updatedTeam;
+    return updatedTeam.toObject();
   }
 }
 

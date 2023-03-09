@@ -31,7 +31,7 @@ const schema = new localDatabase.Schema(
     },
     teams: [
       {
-        id: { type: mongoose.Schema.Types.ObjectId, ref: "Team" },
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: "Team" },
         code: { type: String },
         name: { type: String },
       },

@@ -1,13 +1,14 @@
 import _ from "lodash";
 import AccountService from "../accounts/account.service.js";
 import Team from "./team.model.js";
+import TeamSerializer from "./team.serializer.js";
 import TeamService from "./team.service.js";
 import TeamValidator from "./team.validator.js";
 
 class Controller {
   async index(req, res) {
     const teams = await TeamService.find({ accountId: req.user.accountId });
-    return res.json(teams);
+    return res.json(TeamSerializer.index(teams));
   }
 
   async byId(req, res) {
@@ -15,12 +16,12 @@ class Controller {
       _id: req.params.id,
       accountId: req.user.accountId,
     });
-    if (team) res.json(team);
+    if (team) res.json(TeamSerializer.show(team));
     else res.status(404).end();
   }
 
   async create(req, res) {
-    const me = req.user.toObject();
+    const me = req.user;
     const account = await AccountService.findById(me.accountId);
     const teams = await TeamService.find({ accountId: req.user.accountId });
     if (teams.length > Team.maxTeamsPerPlan(account.planType)) {
@@ -41,7 +42,7 @@ class Controller {
     teamData.code = _.kebabCase(teamData.code);
     const team = await TeamService.create(teamData, req.user.accountId);
     if (team) {
-      return res.json(team);
+      return res.json(TeamSerializer.show(team));
     } else {
       return res.status(422).json({
         message: "Failed to save the team.",
@@ -58,14 +59,14 @@ class Controller {
       });
     }
     const teamData = _.pick(req.body, ["name"]);
-    const result = await TeamService.update(
+    const team = await TeamService.update(
       req.params.id,
       req.user.accountId,
       teamData
     );
 
-    if (result) {
-      return res.json(result);
+    if (team) {
+      return res.json(TeamSerializer.show(team.toObject()));
     } else {
       return res.status(422).json({
         success: false,
@@ -109,7 +110,7 @@ class Controller {
         req.params.userId
       );
       if (team) {
-        return res.json(team);
+        return res.json(TeamSerializer.show(team));
       }
     } catch (error) {
       return res.status(401).json({
@@ -140,7 +141,7 @@ class Controller {
         req.params.userId
       );
       if (team) {
-        return res.json(team);
+        return res.json(TeamSerializer.show(team));
       }
     } catch (error) {
       return res.status(401).json({
