@@ -1,11 +1,12 @@
 import _ from "lodash";
+import AccountSerializer from "./account.serializer.js";
 import AccountService from "./account.service.js";
 import AccountValidator from "./account.validator.js";
 
 class Controller {
   async byId(req, res) {
     const account = await AccountService.byId(req.params.id);
-    if (account) res.json(account);
+    if (account) res.json(AccountSerializer.show(account));
     else res.status(404).end();
   }
 
@@ -29,7 +30,7 @@ class Controller {
     }
     const result = await AccountService.update(req.params.id, accountData);
     if (result) {
-      return res.json(result);
+      return res.json(AccountSerializer.show(result));
     } else {
       return res.status(422).json({
         success: false,

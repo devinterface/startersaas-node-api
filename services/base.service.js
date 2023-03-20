@@ -19,7 +19,7 @@ class BaseService {
       });
     }
 
-    queryModel = this.getModel().find(searchQuery);
+    queryModel = this.getModel().find(searchQuery).lean();
 
     const populate = options.populate;
     if (populate) {
@@ -62,15 +62,15 @@ class BaseService {
       }
     }
 
-    return model.exec();
+    return model.lean().exec();
   }
 
   async oneBy(q) {
-    return this.getModel().findOne(q).exec();
+    return this.getModel().findOne(q).lean().exec();
   }
 
   async all() {
-    return this.getModel().find({}).exec();
+    return this.getModel().find({}).lean().exec();
   }
 
   async paginate(limit, skip, searchOptions, options = {}) {
@@ -118,7 +118,9 @@ class BaseService {
   }
 
   async update(id, data) {
-    return this.getModel().findOneAndUpdate({ _id: id }, data, { new: true });
+    return this.getModel()
+      .lean()
+      .findOneAndUpdate({ _id: id }, data, { new: true });
   }
 
   async deleteLogically(id, deletedBy) {

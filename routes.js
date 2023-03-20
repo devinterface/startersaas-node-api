@@ -1,13 +1,14 @@
 import passport from "passport";
 
-import authRouter from "./api/auth/auth.router.js";
-import userRouter from "./api/users/user.router.js";
 import accountRouter from "./api/accounts/account.router.js";
+import authRouter from "./api/auth/auth.router.js";
 import subscriptionRouter from "./api/subscriptions/subscription.router.js";
+import teamRouter from "./api/teams/team.router.js";
+import userRouter from "./api/users/user.router.js";
 import webhookRouter from "./api/webhooks/webhook.router.js";
 
-import authorizeRequest from "./middlewares/authorizeRequest.middleware.js";
 import ROLE from "./api/users/role.model.js";
+import authorizeRequest from "./middlewares/authorizeRequest.middleware.js";
 import { setLang } from "./middlewares/lang.middleware.js";
 
 // APP ROUTES
@@ -30,4 +31,11 @@ export default function routes(app) {
   );
   app.use("/api/v1/stripe/webhook", webhookRouter);
   app.use("/api/v1/stripe", subscriptionRouter);
+  app.use(
+    "/api/v1/teams",
+    passport.authenticate("jwt", { session: false }),
+    setLang(),
+    authorizeRequest([ROLE.ADMIN]),
+    teamRouter
+  );
 }

@@ -29,6 +29,13 @@ const schema = new localDatabase.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Account",
     },
+    teams: [
+      {
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: "Team" },
+        code: { type: String },
+        name: { type: String },
+      },
+    ],
   },
   { timestamps: true, toJSON: { virtuals: true } }
 );

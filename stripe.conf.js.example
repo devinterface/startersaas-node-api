@@ -1,55 +1,103 @@
 const stripeConf = {
-  publicKey: 'pk_test_XYZ',
-  "plans": [
+  publicKey:
+    "pk_test_",
+  plans: [
     {
-      "id": "price_XYZ",
-      "title": "Starter - Monthly",
-      "price": 4.90,
-      "currency": "EUR",
-      "features": [
+      id: "price_",
+      title: "Starter",
+      price: 9.9,
+      currency: "EUR",
+      features: [
         "1 project",
         "0 tags",
         "star entries",
         "1 user",
         "3 days data retention",
-        "no push notifications"
+        "no push notifications",
       ],
-      "monthly": true,
-      "planType": "starter"
+      monthly: true,
+      planType: "starter",
     },
     {
-      "id": "price_XYZ",
-      "title": "Base - Monthly",
-      "price": 9.90,
-      "currency": "EUR",
-      "features": [
+      id: "price_",
+      title: "Starter",
+      price: 99.0,
+      currency: "EUR",
+      features: [
+        "1 project",
+        "0 tags",
+        "star entries",
+        "1 user",
+        "3 days data retention",
+        "no push notifications",
+      ],
+      monthly: false,
+      planType: "starter",
+    },
+    {
+      id: "price_",
+      title: "Basic",
+      price: 14.9,
+      currency: "EUR",
+      features: [
         "infinite projects",
         "infinite tags",
         "star entries",
         "1 user",
         "20 days data retention",
-        "no push notifications"
+        "no push notifications",
       ],
-      "monthly": true,
-      "planType": "basic"
+      monthly: true,
+      planType: "basic",
     },
     {
-      "id": "price_XYZ",
-      "title": "Pro - Monthly",
-      "price": 14.90,
-      "currency": "EUR",
-      "features": [
+      id: "price_",
+      title: "Basic",
+      price: 149.0,
+      currency: "EUR",
+      features: [
         "infinite projects",
         "infinite tags",
         "star entries",
         "1 user",
-        "50 days data retention",
-        "push notifications"
+        "20 days data retention",
+        "no push notifications",
       ],
-      "monthly": true,
-      "planType": "pro"
-    }
-  ]
-}
-
-export default stripeConf
+      monthly: false,
+      planType: "basic",
+    },
+    {
+      id: "price_",
+      title: "Premium",
+      price: 19.9,
+      currency: "EUR",
+      features: [
+        "infinite projects",
+        "infinite tags",
+        "star entries",
+        "infinite users",
+        "50 days data retention",
+        "push notifications",
+      ],
+      monthly: true,
+      planType: "premium",
+    },
+    {
+      id: "price_",
+      title: "Premium",
+      price: 199.0,
+      currency: "EUR",
+      features: [
+        "infinite projects",
+        "infinite tags",
+        "star entries",
+        "infinite users",
+        "50 days data retention",
+        "push notifications",
+      ],
+      monthly: false,
+      planType: "premium",
+    },
+  ],
+};
+export default stripeConf;

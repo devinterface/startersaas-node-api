@@ -1,5 +1,7 @@
 import _ from "lodash";
+import AccountSerializer from "../accounts/account.serializer.js";
 import AccountService from "../accounts/account.service.js";
+import UserSerializer from "./user.serializer.js";
 import UserService from "./user.service.js";
 import UserValidator from "./user.validator.js";
 
@@ -9,17 +11,17 @@ class Controller {
       _id: req.params.id,
       accountId: req.user.accountId,
     });
-    if (user) res.json(user);
+    if (user) res.json(UserSerializer.show(user));
     else res.status(404).end();
   }
 
   async me(req, res) {
-    const me = req.user.toObject();
+    const me = req.user;
     if (req.query.withAccount === "true") {
       const account = await AccountService.findById(me.accountId);
-      me.account = account;
+      me.account = AccountSerializer.show(account);
     }
-    res.json(me);
+    res.json(UserSerializer.show(me));
   }
 
   async updateMe(req, res) {
@@ -38,7 +40,7 @@ class Controller {
       userData
     );
     if (result) {
-      return res.json(result);
+      return res.json(UserSerializer.show(result));
     } else {
       return res.status(422).json({
         success: false,
@@ -67,7 +69,7 @@ class Controller {
     userData.accountId = req.user.accountId;
     const user = await UserService.create(userData);
     if (user) {
-      return res.json(user);
+      return res.json(UserSerializer.show(user));
     } else {
       return res.status(422).json({
         message: "Failed to save the user.",
@@ -77,7 +79,7 @@ class Controller {
 
   async index(req, res) {
     const users = await UserService.find({ accountId: req.user.accountId });
-    return res.json(users);
+    return res.json(UserSerializer.index(users));
   }
 
   async update(req, res) {
@@ -95,7 +97,7 @@ class Controller {
       userData
     );
     if (result) {
-      return res.json(result);
+      return res.json(UserSerializer.show(result.toObject()));
     } else {
       return res.status(422).json({
         success: false,

@@ -56,7 +56,7 @@ customer.subscription.updated
 For local development, use the stripe-cli to build a local tunnel:
 
 ```bash
-stripe listen --load-from-webhooks-api --forward-to localhost:3000
+stripe listen --forward-to localhost:3000/api/v1/stripe/webhook
 ```
 
 Configure Stripe to retry failed payments for X days (https://dashboard.stripe.com/settings/billing/automatic Smart Retries section), and then cancel the subscription.
@@ -176,6 +176,7 @@ Set `"planType"` with your plan code to a more user friendly knowledge of the cu
 - [x] account's user create (by admins only)
 - [x] account's user update (by admins only)
 - [x] account's user delete (by admins only)
+- [x] teams handling
 
 ### API only
 
@@ -192,7 +193,6 @@ Set `"planType"` with your plan code to a more user friendly knowledge of the cu
 ### TODO
 
 - [ ] signup with Google
-- [ ] teams handling
 
 ### CREDITS
 

@@ -1,6 +1,6 @@
 {
   "name": "startersaas-node-api",
-  "version": "3.5.0",
+  "version": "4.0.0",
   "description": "StarterSaaS Node API",
   "license": "MIT",
   "author": "Stefano Mancini <stefano.mancini@devinterface.com> (https://www.devinterface.com)",
