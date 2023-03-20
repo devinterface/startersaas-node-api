@@ -20,7 +20,7 @@ class AccountSerializer extends BaseSerializer {
       "paymentFailedSubscriptionEndsAt",
       "privacyAccepted",
       "marketingAccepted",
-      "stripePlanID",
+      "stripePlanId",
       "subscriptionExpiresAt",
       "planType",
       "createdAt",

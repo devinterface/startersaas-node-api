@@ -38,6 +38,17 @@ class TeamsService extends BaseService {
   }
 
   async delete(id, accountId) {
+    let team = await this.oneBy({
+      _id: id,
+      accountId: accountId,
+    });
+    if (!team) {
+      throw new ApplicationError("Team is not present", {}, 500);
+    }
+    for (const user of team.users) {
+      await this.removeUser(id, accountId, user._id);
+    }
+
     return this.getModel().findOneAndDelete({ _id: id, accountId: accountId });
   }
 

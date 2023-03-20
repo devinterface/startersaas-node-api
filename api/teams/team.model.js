@@ -23,11 +23,11 @@ schema.virtual("id").get(function () {
 
 schema.statics.maxTeamsPerPlan = function (plan) {
   if (plan == "starter") {
-    return 0;
+    return 5;
   } else if (plan == "basic") {
-    return 1000000;
+    return 10;
   } else if (plan == "pro") {
-    return 1000000;
+    return 20;
   } else {
     return 0;
   }

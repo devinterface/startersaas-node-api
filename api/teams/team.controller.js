@@ -21,10 +21,9 @@ class Controller {
   }
 
   async create(req, res) {
-    const me = req.user;
-    const account = await AccountService.findById(me.accountId);
+    const account = await AccountService.findById(req.user.accountId);
     const teams = await TeamService.find({ accountId: req.user.accountId });
-    if (teams.length > Team.maxTeamsPerPlan(account.planType)) {
+    if (teams.length >= Team.maxTeamsPerPlan(account.planType)) {
       return res.status(401).json({
         success: false,
         errors:
