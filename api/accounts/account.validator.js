@@ -1,5 +1,5 @@
-import Joi from '@hapi/joi'
-import AccountService from './account.service.js'
+import Joi from "@hapi/joi";
+import AccountService from "./account.service.js";
 
 class AccountValidator {
   async onSignup(obj) {
