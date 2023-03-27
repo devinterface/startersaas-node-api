@@ -1,7 +1,7 @@
 import Polyglot from "node-polyglot";
 
-import en from '../locales/en.js'
-import it from '../locales/it.js'
+import en from "../locales/en.js";
+import it from "../locales/it.js";
 
 const defaultLocale = process.env.DEFAULT_LOCALE;
 const availableLocales = JSON.stringify(

@@ -1,5 +1,5 @@
-import moment from 'moment'
-import localDatabase from '../../common/localDatabase.js'
+import moment from "moment";
+import localDatabase from "../../common/localDatabase.js";
 
 const subscriptionTrial = "trial";
 const subscriptionPaymentFailed = "payment_failed";

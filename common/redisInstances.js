@@ -1,5 +1,5 @@
-import Promise from 'bluebird'
-import redis from 'redis'
+import Promise from "bluebird";
+import redis from "redis";
 
 Promise.promisifyAll(redis);
 

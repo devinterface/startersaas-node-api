@@ -1,5 +1,5 @@
-import ApplicationError from '../libs/errors/application.error.js'
-import l from './logger.js'
+import ApplicationError from "../libs/errors/application.error.js";
+import l from "./logger.js";
 
 const notifyException = async (req, error) => {
   l.error(req);
